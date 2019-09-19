@@ -27,20 +27,20 @@
   "scripts": {
     "clean": "lerna clean --yes && rimraf node_modules",
     "start": "lerna run --parallel dev",
-    "preweb": "cpx \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"frontend/assets/image/**/*.*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"packages/landing/static\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" -C",
+    "preweb": "cpx frontend/assets/image/**/*.* packages/landing/static -C",
     "next-dev": "yarn workspace frontend-landing run dev",
     "next-build": "rimraf dist && yarn workspace frontend-landing run build",
     "next-start": "yarn workspace frontend-landing run start",
     "next-export": "yarn workspace frontend-landing run export",
-    "prebuild-public": "rimraf \"dist/functions/**\" && rimraf \"dist/public\"",
+    "prebuild-public": "rimraf dist/functions/** && rimraf dist/public",
     "prefirebase-serve": "yarn run build-public && yarn run build-funcs && yarn workspace frontend-landing run build && yarn run copy-deps && yarn run install-deps",
     "firebase-serve": "cross-env NODE_ENV=production firebase serve",
     "prefirebase-deploy": "yarn run build-public && yarn run build-funcs && yarn workspace frontend-landing run build && yarn run copy-deps",
     "firebase-deploy": "firebase deploy",
-    "build-public": "cpx \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"frontend/assets/**/*.*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"dist/public/static\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" -C && cpx \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"public/**/*.*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"dist/public\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" -C",
-    "build-funcs": "babel \"packages/functions\" --out-dir \"dist/functions\"",
-    "copy-deps": "cpx \\\\\\\\\\\\\\\"frontend/*{package.json,package-lock.json,yarn.lock}\\\\\\\\\\\\\\\" \\\\\\\\\\\\\\\"dist/functions\\\\\\\\\\\\\\\" -C",
-    "install-deps": "cd \"dist/functions\" && yarn",
+    "build-public": "cpx frontend/assets/**/*.* dist/public/static -C && cpx public/**/*.* dist/public -C",
+    "build-funcs": "babel packages/functions --out-dir dist/functions",
+    "copy-deps": "cpx frontend/*{package.json,package-lock.json,yarn.lock dist/functions -C",
+    "install-deps": "cd dist/functions && yarn"
   },
   "husky": {
     "hooks": {
