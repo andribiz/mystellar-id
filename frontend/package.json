@@ -2,6 +2,9 @@
   "name": "frontend-landing",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "10"
+  },
   "scripts": {
     "dev": "node_modules/.bin/next",
     "build": "node_modules/.bin/next build",
@@ -9,16 +12,17 @@
     "export": "node_modules/.bin/next build && next export",
     "docz:dev": "node_modules/.bin/docz dev",
     "docz:build": "node_modules/.bin/docz build",
-    "now-build": "node_modules/.bin/next build && next export -o dist",
-    "netlify-build": "node_modules/.bin/next build && next export"
   },
   "dependencies": {
     "@glidejs/glide": "^3.3.0",
     "@redq/reuse-modal": "^1.1.9",
     "@zeit/next-css": "^1.0.1",
+    "@zeit/next-sass": "latest",
     "antd": "^3.23.3",
     "firebase": "^6.6.1",
-    "next": "^9.0.0",
+    "firebase-functions": "^3.2.0",
+    "firebase-admin": "^8.6.0",
+    "next": "^9.0.6",
     "next-compose-plugins": "^2.2.0",
     "next-fonts": "^0.17.0",
     "next-optimized-images": "^2.5.3",
@@ -41,10 +45,9 @@
     "react-scrollspy": "^3.4.0",
     "react-select": "^3.0.4",
     "react-stickynode": "^2.1.1",
+    "stellar-sdk": "^2.0.0-rc.2",
     "styled-components": "^4.3.2",
-    "styled-system": "^4.1.0",
-    "@zeit/next-sass": "latest",
-    "stellar-sdk": "^3.0.1"
+    "styled-system": "^4.1.0"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
