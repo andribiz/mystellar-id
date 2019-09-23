@@ -59,7 +59,7 @@ const LoginModal = ({
               <TabPane tab="LOGIN" key="loginForm">
                 <Heading content="Welcome Folk" {...titleStyle} />
                 <Text
-                  content="Welcome to Mate Family. Please login with your personal account information letter."
+                  content="Welcome to MyStellar ID. Please login with your personal account information letter."
                   {...descriptionStyle}
                 />
                 <Button
@@ -84,7 +84,7 @@ const LoginModal = ({
               <TabPane tab="REGISTER" key="registerForm">
                 <Heading content="Welcome Folk" {...titleStyle} />
                 <Text
-                  content="Welcome to Mate Family. Please login with your personal account information letter."
+                  content="Welcome to MyStellar ID. Please register with your personal account information letter."
                   {...descriptionStyle}
                 />
                 <Button
