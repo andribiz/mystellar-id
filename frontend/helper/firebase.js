@@ -35,7 +35,7 @@ class FirebaseHelper {
   }
 
   async insertAddress(email, address, stellar, memo) {
-    const domain = "*.mystellar.id";
+    const domain = "*mystellar.id";
     try {
       let doc = await this.database.collection("federation").doc(address + domain).get();
       if (doc.exists)
