@@ -62,16 +62,14 @@ const InfoSection = ({
               description={
                 <Text
                   content="The Stellar Federation Address is an identifier which incorporates your Stellar account id and memo addresses.
-                  Instead using GBXXXXX stellar address, now you can use email-like john*mystellar.id as your stellar ID. Stellar protocol will translate it to you own stellar address (GBXXX...). Cool, right?"
+                  Instead using GBXXXXX stellar address, now you can use email-like john*mystellar.id as your stellar ID. Stellar protocol will translate it to you own stellar address (GBXXX...). Cool, isn't it?"
                   {...description}
                 />
               }
               button={
-                <Link href="https://www.stellar.org/developers/guides/concepts/federation.html">
-                  <a target="_blank">
+                  <a href="https://www.stellar.org/developers/guides/concepts/federation.html" target="_blank">
                     <Button title="LEARN MORE" {...button} {...btnStyle} />
                   </a>
-                </Link>
               }
             />
           </Box>
