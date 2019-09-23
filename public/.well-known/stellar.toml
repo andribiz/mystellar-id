@@ -1,0 +1,56 @@
+# Federation address server
+FEDERATION_SERVER="https://us-central1-mystellar-id.cloudfunctions.net/backend-federation"
+
+# asset with meta info
+[[CURRENCIES]]
+code="EDUB"
+issuer="GDBSF3V4GKZJAO3K5WP656DYMSHTUFDUCKKWUHY37BEHDWBPSOXBNZBJ"
+display_decimals=0
+name="EDU Blockchain Coin"
+desc="1 EDUB token use to issue 1 Education certificate"
+conditions="There will be 1000 EDUB tokens in existence for now."
+image="https://avatars1.githubusercontent.com/u/36980416"
+is_asset_anchored=true
+anchor_asset_type="stock"
+
+
+[[CURRENCIES]]
+code="GOOG"
+issuer="GDBSF3V4GKZJAO3K5WP656DYMSHTUFDUCKKWUHY37BEHDWBPSOXBNZBJ"
+display_decimals=0
+name="Google Stock Coin"
+desc="1 GOOG token use to issue 1 GOOG Stock"
+conditions="There will be 500 GOOG tokens in existence for now."
+image="https://avatars1.githubusercontent.com/u/36980416"
+is_asset_anchored=true
+anchor_asset_type="stock"
+
+
+[[CURRENCIES]]
+code="AAPL"
+issuer="GDBSF3V4GKZJAO3K5WP656DYMSHTUFDUCKKWUHY37BEHDWBPSOXBNZBJ"
+display_decimals=0
+name="Apple Stock Coin"
+desc="1 AAPL token use to issue 1 AAPL Stock"
+conditions="There will be 100 GOOG tokens in existence for now."
+image="https://avatars1.githubusercontent.com/u/36980416"
+is_asset_anchored=true
+anchor_asset_type="stock"
+
+[[CURRENCIES]]
+code="IDRC"
+issuer="GDBSF3V4GKZJAO3K5WP656DYMSHTUFDUCKKWUHY37BEHDWBPSOXBNZBJ"
+display_decimals=0
+name="Indonesia Rupiah Tether"
+desc="Stable coin for indonesia Rupiah IDR"
+conditions="Dynamic supply and demand"
+image="https://mystellar.id/icon/rp.png"
+is_asset_anchored=true
+anchor_asset_type="fiat"
+
+
+[[DOCUMENTATION]]
+ORG_NAME="Bizoft Enterprise"
+ORG_URL="https://mystellar.id"
+ORG_DESCRIPTION="PROF OF CONCEPT"
+

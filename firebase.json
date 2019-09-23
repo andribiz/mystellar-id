@@ -1,12 +1,22 @@
 {
   "hosting": {
-    "public": "dist/public",
+    "public": "public",
     "rewrites": [
       {
         "source": "**/**",
-        "function": "next"
+        "function": "app-next"
       }
-    ]
+    ],
+    "headers": [
+      {
+        "source": ".well-known/stellar.toml",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      }]
   },
   "functions": {
     "source": "dist/functions"
