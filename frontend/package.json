@@ -11,7 +11,7 @@
     "start": "node_modules/.bin/next start",
     "export": "node_modules/.bin/next build && next export",
     "docz:dev": "node_modules/.bin/docz dev",
-    "docz:build": "node_modules/.bin/docz build",
+    "docz:build": "node_modules/.bin/docz build"
   },
   "dependencies": {
     "@glidejs/glide": "^3.3.0",
@@ -43,11 +43,12 @@
     "react-rnd": "^10.0.0",
     "react-scroll-parallax": "^2.1.2",
     "react-scrollspy": "^3.4.0",
-    "react-select": "^3.0.4",
+    "react-select": "^3.0.5",
     "react-stickynode": "^2.1.1",
     "stellar-sdk": "^2.0.0-rc.2",
     "styled-components": "^4.3.2",
-    "styled-system": "^4.1.0"
+    "styled-system": "^4.1.0",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
