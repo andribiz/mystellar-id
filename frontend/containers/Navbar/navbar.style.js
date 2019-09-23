@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {themeGet} from 'styled-system';
+import { themeGet } from 'styled-system';
 
 const NavbarWrapper = styled.nav`
   width: 100%;
@@ -113,13 +113,18 @@ export const MenuArea = styled.div`
         }
         &:hover {
           background: transparent;
-          box-shadow: none;    
-        }        
+          box-shadow: none;
+        }
+      }
+    }
+    &.login {
+      &:hover {
+        background: transparent;
+        box-shadow: none;
       }
     }
   }
 `;
-
 
 export const MobileMenu = styled.div`
   display: none;

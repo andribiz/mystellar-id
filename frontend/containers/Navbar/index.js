@@ -78,6 +78,7 @@ const Navbar = () => {
           {/* end of main menu */}
 
           <Button
+            className="login"
             variant="textButton"
             onClick={handleLoginModal}
             icon={<i className="flaticon-user" />}

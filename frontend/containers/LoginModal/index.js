@@ -13,7 +13,7 @@ import Image from '../../elements/Image';
 import LoginModalWrapper from './loginModal.style';
 import 'rc-tabs/assets/index.css';
 import LogoImage from '../../assets/image/logo.png';
-import LoginImage from '../../assets/image/login-bg.jpg';
+import LoginImage from '../../assets/image/background-login.jpg';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
 
 const LoginModal = ({
