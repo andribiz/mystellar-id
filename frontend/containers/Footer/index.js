@@ -26,7 +26,7 @@ const Footer = ({
               logoStyle={logoStyle}
             />
             <Box {...copyright} className="copyrightText">
-              <Text content="copyright 2019 RedQ, Inc." {...textStyle} />
+              <Text content="copyright 2019 mystellar.id." {...textStyle} />
             </Box>
             <Box {...copyrightMenu} className="copyrightMenu">
               <Text content="We welcome donation for our team to develop more: " {...textStyle}/>
