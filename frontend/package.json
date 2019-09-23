@@ -25,6 +25,7 @@
     "next-transpile-modules": "^2.3.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
+    "rc-tabs": "^9.6.7",
     "react-accessible-accordion": "^3.0.0",
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-content-loader": "^4.2.2",
