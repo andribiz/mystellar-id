@@ -50,7 +50,7 @@ const LoginModal = ({
         </Box>
         <Box className="col tabCol" {...col}>
           <Box {...contentWrapper}>
-            <Image src={LogoImage} {...logoStyle} alt="Logo" />
+            {/*<Image src={LogoImage} {...logoStyle} alt="Logo" />*/}
             <Tabs
               defaultActiveKey="loginForm"
               renderTabBar={() => <ScrollableInkTabBar />}
