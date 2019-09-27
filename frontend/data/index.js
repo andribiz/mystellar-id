@@ -1,10 +1,8 @@
 const siteConfig = {
-    siteName: 'ISOMORPHIC',
-    siteIcon: 'ion-flash',
-    dashboard: '/console',
-    footerText: 'Isomorphic ©2019 Created by RedQ, Inc'
+  siteName: 'MyStellar ID',
+  siteIcon: 'ion-flash',
+  dashboard: '/console',
+  footerText: 'MyStellar ID ©2019 Created by mystellar.id',
 };
 
-export {
-    siteConfig,
-};
+export { siteConfig };

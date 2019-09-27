@@ -2,9 +2,7 @@
   "name": "frontend-landing",
   "version": "1.0.0",
   "main": "index.js",
-  "engines": {
-    "node": "10"
-  },
+
   "scripts": {
     "dev": "node_modules/.bin/next",
     "build": "node_modules/.bin/next build",
@@ -46,6 +44,8 @@
     "react-scrollspy": "^3.4.0",
     "react-select": "^3.0.5",
     "react-stickynode": "^2.1.1",
+    "react-redux": "^7.1.1",
+    "redux": "^4.0.4",
     "stellar-sdk": "^2.0.0-rc.2",
     "styled-components": "^4.3.2",
     "styled-system": "^4.1.0",
