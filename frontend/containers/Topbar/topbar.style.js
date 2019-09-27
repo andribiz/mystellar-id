@@ -13,7 +13,7 @@ const TopbarWrapper = styled.div`
     z-index: 1000;
     ${transition()};
 
-    @media only screen and (max-width: 500px) {
+    @media only screen and (max-width: 767px) {
       padding: ${props =>
         props['data-rtl'] === 'rtl'
           ? '0px 15px !important'
@@ -35,7 +35,7 @@ const TopbarWrapper = styled.div`
       display: flex;
       align-items: center;
       
-      @media only screen and (max-width: 500px) {
+      @media only screen and (max-width: 767px) {
           flex: 1, flexDirection: 'row',
           margin:0,
           padding:0;
@@ -80,7 +80,7 @@ const TopbarWrapper = styled.div`
         position: relative;
         display: inline-block;
 
-        @media only screen and (max-width: 360px) {
+        @media only screen and (max-width: 767px) {
           margin-left: ${props => (props['data-rtl'] === 'rtl' ? '25px' : '0')};
           margin-right: ${props =>
             props['data-rtl'] === 'rtl' ? '0' : '25px'};
