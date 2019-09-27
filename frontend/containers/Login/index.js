@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Tabs, { TabPane } from 'rc-tabs';
 import TabContent from 'rc-tabs/lib/TabContent';
@@ -10,13 +10,16 @@ import Input from '../../elements/Input';
 import CheckBox from '../../elements/Checkbox/index';
 import Button from '../../elements/Button';
 import Image from '../../elements/Image';
-import LoginModalWrapper from './loginModal.style';
+import LoginWrapper from './login.style';
 import 'rc-tabs/assets/index.css';
-import LogoImage from '../../assets/image/logo.png';
 import LoginImage from '../../assets/image/background-login.jpg';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
+import FirebaseHelper from '../../helper/firebase';
+import { Alert } from 'antd';
+import Router from 'next/router';
+const { login, register, isAuthenticated } = FirebaseHelper;
 
-const LoginModal = ({
+const Login = ({
   row,
   col,
   btnStyle,
@@ -27,9 +30,58 @@ const LoginModal = ({
   descriptionStyle,
   googleButtonStyle,
 }) => {
+  const [state, setState] = useState({ email: '', password: '' });
+  const [stateReg, setStateReg] = useState({
+    email: '',
+    password: '',
+    name: '',
+  });
+  const [stateNotify, setStateNotify] = useState({
+    isLoading: false,
+    errMessage: '',
+    loginMessage: '',
+  });
+
+  const handleLogin = method => {
+    setStateNotify({ isLoading: true, loginMessage: '' });
+    login(method, state.email, state.password)
+      .then(res => {
+        setStateNotify({ isLoading: false, loginMessage: '' });
+        console.log('Success');
+      })
+      .catch(error => {
+        setStateNotify({ isLoading: false, loginMessage: error.message });
+        console.log(error.message);
+      });
+  };
+
+  const handleRegister = () => {
+    setStateNotify({ isLoading: true, errMessage: '' });
+
+    register(stateReg.email, stateReg.password)
+      .then(res => {
+        if (res.errCode)
+          setStateNotify({ isLoading: false, errMessage: res.message });
+        else {
+          setStateNotify({ isLoading: false, errMessage: '' });
+          console.log(`Success ${res.user}`);
+        }
+      })
+      .catch(error => {
+        setStateNotify({ isLoading: false, errMessage: error.message });
+      });
+  };
+
   const LoginButtonGroup = () => (
     <Fragment>
-      <Button className="default" title="LOGIN" {...btnStyle} />
+      <Button
+        className="default"
+        title="LOGIN"
+        onClick={() => {
+          handleLogin(FirebaseHelper.EMAIL);
+        }}
+        {...btnStyle}
+      />
       <Button
         title="Forget Password"
         variant="textButton"
@@ -39,11 +91,19 @@ const LoginModal = ({
   );
   const SignupButtonGroup = () => (
     <Fragment>
-      <Button className="default" title="REGISTER" {...btnStyle} />
+      <Button
+        className="default"
+        title={stateNotify.isLoading ? 'PROCESSING' : 'REGISTER'}
+        onClick={handleRegister}
+        isLoading={stateNotify.isLoading}
+        // disabled={stateNotify.isLoading}
+        {...btnStyle}
+      />
     </Fragment>
   );
+
   return (
-    <LoginModalWrapper>
+    <LoginWrapper>
       <Box className="row" {...row}>
         <Box className="col imageCol" {...col}>
           <Image className="patternImage" src={LoginImage} alt="Login Banner" />
@@ -57,7 +117,10 @@ const LoginModal = ({
               renderTabContent={() => <TabContent />}
             >
               <TabPane tab="LOGIN" key="loginForm">
-                <Heading content="Welcome Folk" {...titleStyle} />
+                <Heading
+                  content={`Welcome Folk ${state.user}`}
+                  {...titleStyle}
+                />
                 <Text
                   content="Welcome to MyStellar ID. Please login with your personal account information letter."
                   {...descriptionStyle}
@@ -67,11 +130,26 @@ const LoginModal = ({
                   title="Sign in with Google"
                   iconPosition="left"
                   className="google-login__btn"
+                  onClick={() => {
+                    handleLogin(FirebaseHelper.GOOGLE);
+                  }}
                   {...googleButtonStyle}
                 />
 
-                <Input inputType="email" isMaterial label="Email Address" />
-                <Input inputType="password" isMaterial label="Password" />
+                <Input
+                  inputType="email"
+                  isMaterial
+                  label="Email Address"
+                  value={state.email}
+                  onChange={value => setState({ ...state, email: value })}
+                />
+                <Input
+                  inputType="password"
+                  isMaterial
+                  value={state.password}
+                  onChange={value => setState({ ...state, password: value })}
+                  label="Password"
+                />
                 <CheckBox
                   id="remember"
                   htmlFor="remember"
@@ -93,11 +171,41 @@ const LoginModal = ({
                   iconPosition="left"
                   className="google-login__btn"
                   {...googleButtonStyle}
+                  onClick={() => {
+                    handleLogin(FirebaseHelper.GOOGLE);
+                  }}
                 />
-                <Input isMaterial label="Full Name" />
-                <Input inputType="email" isMaterial label="Email Address" />
-                <Input inputType="password" isMaterial label="Password" />
-                <div>
+                <Input
+                  isMaterial
+                  inputType="text"
+                  value={stateReg.name}
+                  onChange={value => setStateReg({ ...stateReg, name: value })}
+                  label="Full Name"
+                />
+                <Input
+                  inputType="email"
+                  isMaterial
+                  value={stateReg.email}
+                  onChange={value => setStateReg({ ...stateReg, email: value })}
+                  label="Email Address"
+                />
+                <Input
+                  inputType="password"
+                  isMaterial
+                  value={stateReg.password}
+                  onChange={value =>
+                    setStateReg({ ...stateReg, password: value })
+                  }
+                  label="Password"
+                />
+                {stateNotify.errMessage && (
+                  <Alert
+                    message={stateNotify.errMessage}
+                    type="error"
+                    showIcon
+                  />
+                )}
+                <div style={{ paddingTop: '20px' }}>
                   <SignupButtonGroup />
                 </div>
               </TabPane>
@@ -105,12 +213,12 @@ const LoginModal = ({
           </Box>
         </Box>
       </Box>
-    </LoginModalWrapper>
+    </LoginWrapper>
   );
 };
 
-// LoginModal style props
-LoginModal.propTypes = {
+// Login style props
+Login.propTypes = {
   row: PropTypes.object,
   col: PropTypes.object,
   logoStyle: PropTypes.object,
@@ -121,8 +229,8 @@ LoginModal.propTypes = {
   googleButtonStyle: PropTypes.object,
 };
 
-// LoginModal default style
-LoginModal.defaultProps = {
+// Login default style
+Login.defaultProps = {
   // Team member row default style
   row: {
     flexBox: true,
@@ -182,5 +290,6 @@ LoginModal.defaultProps = {
     color: '#343D48',
   },
 };
+//
 
-export default LoginModal;
+export default Login;

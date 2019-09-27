@@ -1,34 +1,56 @@
-import React from 'react';
-import App from 'next/app';
-import LayoutConsole from "../containers/LayoutConsole";
+import LayoutConsole from '../containers/LayoutConsole';
+import React, { useState } from 'react';
+import FirebaseHelper from '../helper/firebase';
+import Router from 'next/router';
 
-class MyApp extends App {
+const { isAuthenticated } = FirebaseHelper;
 
-    static async getInitialProps({Component, ctx}) {
-        console.log(ctx.pathname);
+const MyApp = ({ router, Component, pageProps }) => {
+  const [user, setUser] = useState('');
 
-        const props = {pageProps: {}, staticPage: true};
+  const staticPage = router.pathname.startsWith('/console');
+  console.log(`${router.pathname} ${staticPage}`);
 
-        if (ctx.pathname.startsWith("/console")) {
-            props.staticPage = false;
-        }
-        return props
-    }
+  if (user === '') {
+    isAuthenticated(user => {
+      setUser(user);
+    });
+  }
 
-    render() {
-        const {Component, pageProps, staticPage} = this.props;
+  return !staticPage ? (
+    <Component user={user} {...pageProps} />
+  ) : (
+    <LayoutConsole user={user}>
+      <Component user={user} {...pageProps} />
+    </LayoutConsole>
+  );
+};
 
-        return staticPage ?
-         (
-                <Component {...pageProps}/>
-        )
-        :
-         (
-            <LayoutConsole>
-                <Component {...pageProps}/>
-            </LayoutConsole>
-        );
-    }
-}
+// MyApp.getInitialProps = async (context) => {
+//     const {query, req, router, ctx} = context;
+//
+//     const user = await useGetUser();
+//
+//     const redirectTo = (url) => {
+//         if (ctx.res) {
+//             ctx.res.writeHead(302, {Location: url})
+//             ctx.res.end()
+//         } else {
+//             if (url[0] === '/' && url[1] !== '/') {
+//                 Router.push(url)
+//             } else {
+//                 window.location = url
+//             }
+//         }
+//     }
+//
+//     if (["/login", "forgot"].includes(router.pathname) && user !== null) {
+//         redirectTo("/console");
+//     } else if (["/console"].includes(router.pathname) && user === null)
+//         redirectTo("/login");
+//
+//
+//     return {query, user};
+// };
 
 export default MyApp;

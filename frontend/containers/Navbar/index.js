@@ -9,7 +9,7 @@ import { x } from 'react-icons-kit/feather/x';
 import Logo from '../../elements/UI/Logo';
 import Button from '../../elements/Button';
 import Container from '../../components/UI/Container';
-import LoginModal from '../LoginModal';
+import LoginModal from '../Login';
 import Scrollspy from 'react-scrollspy';
 
 import NavbarWrapper, { MenuArea, MobileMenu } from './navbar.style';
@@ -56,7 +56,7 @@ const Navbar = () => {
     //       friction: 26,
     //     },
     //   },
-    //   component: LoginModal,
+    //   component: Login,
     //   componentProps: {},
     //   closeComponent: CloseModalButton,
     //   closeOnClickOutside: false,
