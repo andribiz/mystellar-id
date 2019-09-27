@@ -6,15 +6,13 @@ import { appTheme } from '../theme';
 import { AppWrapper, GlobalStyle } from '../containers/app.style';
 import { ResetCSS } from '../assets/css/style';
 import Navbar from '../containers/Navbar';
-// import NavbarOld from '../containers/NavbarOld';
-// import DomainSection from '../containers/Banner';
-// import APISection from '../containers/APISection';
-// import InfoSection from '../containers/InfoSection';
-// import Footer from '../containers/Footer';
 import { DrawerProvider } from '../contexts/DrawerContext';
-// import Faq from "../containers/Faq";
-import LoginModal from '../containers/LoginModal';
 import Footer from '../containers/Footer';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import withAuthentication from '../helper/withAuthentication';
+
+const LoginForm = dynamic(() => import('../containers/Login'));
 
 function getSize() {
   return {
@@ -43,8 +41,10 @@ function useWindowSize() {
   return windowSize;
 }
 
-export default function Index() {
+const LoginPage = ({ user }) => {
   const size = process.browser && useWindowSize();
+  const router = useRouter();
+
   return (
     <ThemeProvider theme={appTheme}>
       <>
@@ -67,7 +67,7 @@ export default function Index() {
         <AppWrapper>
           <Sticky top={0} innerZ={9999} activeClass="sticky-nav-active">
             <DrawerProvider>
-              <Navbar />
+              <Navbar user={user} isSimple={true} />
             </DrawerProvider>
           </Sticky>
           {/*<DomainSection/>*/}
@@ -75,10 +75,13 @@ export default function Index() {
           {/*<APISection />*/}
           {/*<Faq/>*/}
           {/*<Footer />*/}
-          <LoginModal />
+          <LoginForm />
+
           <Footer />
         </AppWrapper>
       </>
     </ThemeProvider>
   );
-}
+};
+
+export default withAuthentication('/console')(LoginPage);

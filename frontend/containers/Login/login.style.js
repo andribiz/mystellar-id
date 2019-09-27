@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { themeGet } from 'styled-system';
 
-const LoginModalWrapper = styled.div`
+const LoginWrapper = styled.div`
   width: 80%;
   margin: 71px auto;
   border-radius: 5px;
@@ -82,6 +82,10 @@ const LoginModalWrapper = styled.div`
           height: auto;
         }
       }
+      &:hover {
+        background: transparent;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
     }
     .reusecore__input {
       margin-bottom: 30px;
@@ -116,4 +120,4 @@ const LoginModalWrapper = styled.div`
   }
 `;
 
-export default LoginModalWrapper;
+export default LoginWrapper;
