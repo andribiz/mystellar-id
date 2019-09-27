@@ -107,17 +107,13 @@ const Login = ({
         </Box>
         <Box className="col tabCol" {...col}>
           <Box {...contentWrapper}>
-            {/*<Image src={LogoImage} {...logoStyle} alt="Logo" />*/}
             <Tabs
               defaultActiveKey="loginForm"
               renderTabBar={() => <ScrollableInkTabBar />}
               renderTabContent={() => <TabContent />}
             >
               <TabPane tab="LOGIN" key="loginForm">
-                <Heading
-                  content={`Welcome Folk ${state.user}`}
-                  {...titleStyle}
-                />
+                <Heading content={`Welcome Folk`} {...titleStyle} />
                 <Text
                   content="Welcome to MyStellar ID. Please login with your personal account information letter."
                   {...descriptionStyle}
@@ -263,7 +259,6 @@ Login.defaultProps = {
   },
   // Content wrapper style
   contentWrapper: {
-    pt: ['32px', '56px'],
     pl: ['17px', '32px', '38px', '40px', '56px'],
     pr: '32px',
     pb: ['32px', '56px'],

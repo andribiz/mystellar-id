@@ -67,7 +67,7 @@ const LoginPage = ({ user }) => {
         <AppWrapper>
           <Sticky top={0} innerZ={9999} activeClass="sticky-nav-active">
             <DrawerProvider>
-              <Navbar />
+              <Navbar user={user} isSimple={true} />
             </DrawerProvider>
           </Sticky>
           {/*<DomainSection/>*/}
