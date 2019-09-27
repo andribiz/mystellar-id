@@ -21,8 +21,9 @@ class FirebaseHelper {
     this.register = this.register.bind(this);
     this.insertAddress = this.insertAddress.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
-    this.useGetUser = this.useGetUser.bind(this);
+    this.logout = this.logout.bind(this);
     this.database = firebase.firestore();
+    this.auth = firebase.auth();
 
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
@@ -37,17 +38,15 @@ class FirebaseHelper {
     switch (provider) {
       case this.GOOGLE: {
         const provider = new firebase.auth.GoogleAuthProvider();
-        return await firebase.auth().signInWithPopup(provider);
+        return await this.auth.signInWithPopup(provider);
       }
-      case this.EMAIL: {
-      }
-      default:
+      case this.EMAIL:
+        return await this.auth.signInWithEmailAndPassword(email, password);
     }
   }
 
   async register(email, password) {
-    const res = await firebase
-      .auth()
+    const res = await this.auth
       .createUserWithEmailAndPassword(email, password)
       .catch(error => {
         console.log(`${error.code} ${error.message}`);
@@ -80,31 +79,15 @@ class FirebaseHelper {
   }
 
   logout() {
-    return firebase.auth().signOut();
-  }
-
-  async useGetUser() {
-    const user = await firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        console.log('Success1');
-        return user;
-      } else {
-        console.log('Error');
-        return null;
-      }
-    });
-    console.log('sini');
-    return user;
+    return this.auth.signOut();
   }
 
   isAuthenticated(onCompleted) {
-    firebase.auth().onAuthStateChanged(user => {
+    this.auth.onAuthStateChanged(user => {
       if (user) {
         onCompleted(user);
-        console.log('Success');
       } else {
         onCompleted(null);
-        console.log('Error');
       }
     });
   }

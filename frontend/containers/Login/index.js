@@ -47,11 +47,9 @@ const Login = ({
     login(method, state.email, state.password)
       .then(res => {
         setStateNotify({ isLoading: false, loginMessage: '' });
-        console.log('Success');
       })
       .catch(error => {
         setStateNotify({ isLoading: false, loginMessage: error.message });
-        console.log(error.message);
       });
   };
 
@@ -64,7 +62,6 @@ const Login = ({
           setStateNotify({ isLoading: false, errMessage: res.message });
         else {
           setStateNotify({ isLoading: false, errMessage: '' });
-          console.log(`Success ${res.user}`);
         }
       })
       .catch(error => {
