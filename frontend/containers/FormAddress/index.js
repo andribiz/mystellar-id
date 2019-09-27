@@ -117,7 +117,7 @@ const FormAddress = ({
         <Text
           content={
             (!!user ? `Hello, ${user.displayName}. ` : '') +
-            'Dina your desired federation address with MyStellar.id domain in form below'
+            ' your desired federation address with MyStellar.id domain in form below'
           }
           {...descriptionStyle}
         />
@@ -167,9 +167,7 @@ const FormAddress = ({
 
 // Login style props
 FormAddress.propTypes = {
-  row: PropTypes.object,
-  col: PropTypes.object,
-  logoStyle: PropTypes.object,
+  btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
   hintTextStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
@@ -179,21 +177,6 @@ FormAddress.propTypes = {
 
 // Login default style
 FormAddress.defaultProps = {
-  // Team member row default style
-  row: {
-    flexBox: true,
-    flexWrap: 'wrap',
-  },
-  // Team member col default style
-  col: {
-    width: [1],
-  },
-  // Default logo size
-  logoStyle: {
-    width: '128px',
-    height: 'auto',
-    ml: '15px',
-  },
   // Title default style
   titleStyle: {
     fontSize: ['22px', '36px', '50px'],
@@ -232,13 +215,6 @@ FormAddress.defaultProps = {
     minWidth: '156px',
     fontSize: '14px',
     fontWeight: '500',
-  },
-  // Outline button outline style
-  outlineBtnStyle: {
-    minWidth: '156px',
-    fontSize: '14px',
-    fontWeight: '500',
-    color: 'rgb(26, 115, 232)',
   },
   // Google button style
   googleButtonStyle: {

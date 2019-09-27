@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 
-export const DiscountWrapper = styled.div`
-  text-align: left;
-`;
 export const ButtonWrapper = styled.div`
   position: relative;
   @media screen and (max-width: 991px) and (min-width: 767px) {
