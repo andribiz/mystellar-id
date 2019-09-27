@@ -16,8 +16,8 @@ const TopbarWrapper = styled.div`
     @media only screen and (max-width: 500px) {
       padding: ${props =>
         props['data-rtl'] === 'rtl'
-          ? '0px 260px 0px 15px !important'
-          : '0px 15px 0px 260px !important'};
+          ? '0px 15px !important'
+          : '0px 15px !important'};
     }
 
     &.collapsed {
@@ -34,7 +34,13 @@ const TopbarWrapper = styled.div`
     .isoLeft {
       display: flex;
       align-items: center;
-
+      
+      @media only screen and (max-width: 500px) {
+          flex: 1, flexDirection: 'row',
+          margin:0,
+          padding:0;
+      }
+      
       .triggerBtn {
         width: 24px;
         height: 100%;
@@ -48,10 +54,6 @@ const TopbarWrapper = styled.div`
         outline: 0;
         position: relative;
         cursor: pointer;
-
-        @media only screen and (max-width: 500px) {
-          display: flex-start;
-        }
 
         &:before {
           content: '\f20e';
@@ -105,7 +107,7 @@ const TopbarWrapper = styled.div`
             width: 20px;
             height: 20px;
             display: -webkit-inline-flex;
-            display: -ms-inline-flex;
+            display: -ms-inline-flex;d
             display: inline-flex;
             align-items: center;
             justify-content: center;
