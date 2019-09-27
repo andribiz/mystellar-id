@@ -10,6 +10,7 @@ import { DrawerProvider } from '../contexts/DrawerContext';
 import Footer from '../containers/Footer';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import withAuthentication from '../helper/withAuthentication';
 
 const LoginForm = dynamic(() => import('../containers/Login'));
 
@@ -40,11 +41,9 @@ function useWindowSize() {
   return windowSize;
 }
 
-export default function Index({ user }) {
+const LoginPage = ({ user }) => {
   const size = process.browser && useWindowSize();
   const router = useRouter();
-
-  console.log(user.email);
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -76,13 +75,13 @@ export default function Index({ user }) {
           {/*<APISection />*/}
           {/*<Faq/>*/}
           {/*<Footer />*/}
-          {user === '' && <h1>Loading</h1>}
-          {user.email && router.push('/console')}
-          {user === null && <LoginForm />}
+          <LoginForm />
 
           <Footer />
         </AppWrapper>
       </>
     </ThemeProvider>
   );
-}
+};
+
+export default withAuthentication('/console')(LoginPage);
