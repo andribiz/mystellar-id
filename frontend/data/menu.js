@@ -10,8 +10,8 @@ const menus = [
   {
     group: 'Asset',
     items: [
-      { path: '/create-asset', name: 'Create Asset', icon: 'ion-android-mail' },
-      { path: '/list-assets', name: 'Your Asset', icon: 'ion-chatbubbles' },
+      { path: '/not-yet', name: 'Create Asset', icon: 'ion-android-mail' },
+      { path: '/not-yet', name: 'Your Asset', icon: 'ion-chatbubbles' },
     ],
   },
 ];
