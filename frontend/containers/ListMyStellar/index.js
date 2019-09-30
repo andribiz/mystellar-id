@@ -13,25 +13,8 @@ import { Alert, Table, Divider } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
+const { login, insertAddress, isAuthenticated, dbfed } = FirebaseHelper;
 const { Column, ColumnGroup } = Table;
-
-const data = [
-  {
-    key: '1',
-    federation: 'anjing*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
-  },
-  {
-    key: '1',
-    federation: 'anjing2*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
-  },
-];
 
 const ListMystellar = ({
   btnStyle,
@@ -49,6 +32,18 @@ const ListMystellar = ({
     stellar_addr: '',
     memo: '',
   });
+  const [data, setData] = useState([]);
+
+  function toJson(doc) {
+    const dt = doc.data();
+    return {
+      id: doc.id,
+      email: dt.email,
+      memo: dt.memo,
+      stellar_addr: dt.stellar_addr,
+      memo_type: dt.memo_type,
+    };
+  }
 
   const handleSigning = () => {
     login('google').then(result => {
@@ -56,11 +51,49 @@ const ListMystellar = ({
     });
   };
 
+  function toJson(doc) {
+    const dt = doc.data();
+    return {
+      id: doc.id,
+      email: dt.email,
+      memo: dt.memo,
+      stellar_addr: dt.stellar_addr,
+      memo_type: dt.memo_type,
+    };
+  }
+
+  const unsubscribe = dbfed().onSnapshot(function() {});
+
+  const updateData = async user => {
+    let dt = dbfed().where('email', '==', user.email);
+
+    dt.onSnapshot(function(snapshot) {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          setData(data => [...data, toJson(change.doc)]);
+        }
+        // if (change.type === "modified") {
+        //     console.log("Modified city: ", change.doc.data());
+        // }
+        // if (change.type === "removed") {
+        //     console.log("Removed city: ", change.doc.data());
+        // }
+      });
+    });
+  };
+
   useEffect(() => {
     isAuthenticated(user => {
       setUser(user);
+      if (user) {
+        updateData(user);
+
+        return () => {
+          unsubscribe();
+        };
+      }
     });
-  });
+  }, []);
 
   const handleSubmit = () => {
     if (!user) {
@@ -133,15 +166,16 @@ const ListMystellar = ({
       <Box {...contentWrapper}>
         <Heading content="Your Addresses" {...titleStyle} />
 
-        <Table dataSource={data}>
-          <Column title="Federation" dataIndex="federation" key="federation" />
+        <Table dataSource={data} scroll={{ x: '200%' }}>
+          <Column title="Federation" dataIndex="id" key="id" fixed="left" />
+          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
+          <Column title="Memo" dataIndex="memo" key="memo" />
           <Column
             title="Stellar Addr"
             dataIndex="stellar_addr"
             key="stellar_addr"
           />
-          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
-          <Column title="Memo" dataIndex="memo" key="memo" />
+
           <Column
             title="Action"
             key="Action"
@@ -152,6 +186,7 @@ const ListMystellar = ({
                 <a>Delete</a>
               </span>
             )}
+            fixed="right"
           />
         </Table>
         <AlertMessage />
