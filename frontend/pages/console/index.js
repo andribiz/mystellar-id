@@ -4,9 +4,9 @@ import Head from 'next/head';
 import FormAddress from '../../containers/FormAddress';
 import Box from '../../elements/Box';
 import PropTypes from 'prop-types';
-import DomainSection from '../../containers/Banner';
 import Container from '../../components/UI/Container';
 import APISection from '../../containers/APISection';
+import ListMystellar from '../../containers/ListMyStellar';
 
 const Index = ({ row, col, list, tools }) => {
   return (
@@ -29,7 +29,7 @@ const Index = ({ row, col, list, tools }) => {
             <FormAddress />
           </Box>
           <Box {...list}>
-            <FormAddress />
+            <ListMystellar />
           </Box>
         </Box>
         <Box {...row}>
