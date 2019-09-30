@@ -1,17 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
-import Text from '../../elements/Text';
 import Heading from '../../elements/Heading';
-import Input from '../../elements/Input';
 import Button from '../../elements/Button';
-import Image from '../../elements/Image';
-import ListMystellarWrapper from './ListMystellar.style';
-import GoogleLogo from '../../assets/image/google-icon.jpg';
+import ListMystellarWrapper from './ListDomain.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Table, Divider } from 'antd';
+import { Alert, Divider, Table } from 'antd';
 import 'antd/es/alert/style/css';
-import StellarBase from 'stellar-sdk';
 
 const { login, insertAddress, isAuthenticated } = FirebaseHelper;
 const { Column, ColumnGroup } = Table;
@@ -19,21 +14,15 @@ const { Column, ColumnGroup } = Table;
 const data = [
   {
     key: '1',
-    federation: 'anjing*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
+    domain: 'mystellar.id',
   },
   {
     key: '2',
-    federation: 'anjing2*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
+    domain: 'bizoft.id',
   },
 ];
 
-const ListMystellar = ({
+const ListDomain = ({
   btnStyle,
   titleStyle,
   contentWrapper,
@@ -91,37 +80,24 @@ const ListMystellar = ({
         <Heading content="Your Addresses" {...titleStyle} />
 
         <Table dataSource={data}>
-          <Column title="Federation" dataIndex="federation" key="federation" />
-          <Column
-            title="Stellar Addr"
-            dataIndex="stellar_addr"
-            key="stellar_addr"
-          />
-          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
-          <Column title="Memo" dataIndex="memo" key="memo" />
+          <Column title="Domain" dataIndex="domain" key="domain" />
           <Column
             title="Action"
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Change</a>
-                <Divider type="vertical" />
                 <a>Delete</a>
               </span>
             )}
           />
         </Table>
-        <AlertMessage />
-        <div>
-          <LoginButtonGroup isLoggedIn={!!user} />
-        </div>
       </Box>
     </ListMystellarWrapper>
   );
 };
 
 // Login style props
-ListMystellar.propTypes = {
+ListDomain.propTypes = {
   btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
   hintTextStyle: PropTypes.object,
@@ -131,10 +107,10 @@ ListMystellar.propTypes = {
 };
 
 // Login default style
-ListMystellar.defaultProps = {
+ListDomain.defaultProps = {
   // Title default style
   titleStyle: {
-    fontSize: ['22px', '36px', '50px'],
+    fontSize: ['22px', '26px', '40px'],
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',
@@ -178,4 +154,4 @@ ListMystellar.defaultProps = {
   },
 };
 
-export default ListMystellar;
+export default ListDomain;

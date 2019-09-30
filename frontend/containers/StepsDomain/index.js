@@ -6,40 +6,22 @@ import Heading from '../../elements/Heading';
 import Input from '../../elements/Input';
 import Button from '../../elements/Button';
 import Image from '../../elements/Image';
-import ListMystellarWrapper from './ListMystellar.style';
+import StepsDomainWrapper from './formAddress.style';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Table, Divider } from 'antd';
+import { Alert, Steps } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
 const { login, insertAddress, isAuthenticated } = FirebaseHelper;
-const { Column, ColumnGroup } = Table;
+const { Step } = Steps;
 
-const data = [
-  {
-    key: '1',
-    federation: 'anjing*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
-  },
-  {
-    key: '2',
-    federation: 'anjing2*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
-  },
-];
-
-const ListMystellar = ({
+const StepsDomain = ({
   btnStyle,
   titleStyle,
   contentWrapper,
   descriptionStyle,
   hintTextStyle,
-  googleButtonStyle,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [user, setUser] = useState(null);
@@ -50,17 +32,7 @@ const ListMystellar = ({
     memo: '',
   });
 
-  const handleSigning = () => {
-    login('google').then(result => {
-      setUser(result.user);
-    });
-  };
-
-  useEffect(() => {
-    isAuthenticated(user => {
-      setUser(user);
-    });
-  });
+  useEffect(() => {});
 
   const handleSubmit = () => {};
 
@@ -68,7 +40,7 @@ const ListMystellar = ({
     <Fragment>
       <Button
         className="default"
-        title="I'm Ready"
+        title="Next"
         onClick={handleSubmit}
         isLoading={input.isLoading}
         disabled={input.isLoading}
@@ -77,51 +49,29 @@ const ListMystellar = ({
     </Fragment>
   );
 
-  const AlertMessage = () => {
-    if (msg.errCode === 0)
-      return <Alert message={msg.message} type="success" showIcon />;
-    else if (msg.errCode === 1)
-      return <Alert message={msg.message} type="error" showIcon />;
-    return null;
-  };
-
   return (
-    <ListMystellarWrapper>
+    <StepsDomainWrapper>
       <Box {...contentWrapper}>
-        <Heading content="Your Addresses" {...titleStyle} />
+        <Heading content="Make your own domain" {...titleStyle} />
 
-        <Table dataSource={data}>
-          <Column title="Federation" dataIndex="federation" key="federation" />
-          <Column
-            title="Stellar Addr"
-            dataIndex="stellar_addr"
-            key="stellar_addr"
-          />
-          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
-          <Column title="Memo" dataIndex="memo" key="memo" />
-          <Column
-            title="Action"
-            key="Action"
-            render={(text, record) => (
-              <span>
-                <a>Change</a>
-                <Divider type="vertical" />
-                <a>Delete</a>
-              </span>
-            )}
-          />
-        </Table>
-        <AlertMessage />
+        <Steps type="navigation" current={0}>
+          <Step key={'1'} title={'Register'} />
+          <Step key={'2'} title={'Settings'} />
+          <Step key={'3'} title={'Finish'} />
+        </Steps>
+        <Box>
+          <h1>Halo 1</h1>
+        </Box>
         <div>
           <LoginButtonGroup isLoggedIn={!!user} />
         </div>
       </Box>
-    </ListMystellarWrapper>
+    </StepsDomainWrapper>
   );
 };
 
 // Login style props
-ListMystellar.propTypes = {
+StepsDomain.propTypes = {
   btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
   hintTextStyle: PropTypes.object,
@@ -131,10 +81,10 @@ ListMystellar.propTypes = {
 };
 
 // Login default style
-ListMystellar.defaultProps = {
+StepsDomain.defaultProps = {
   // Title default style
   titleStyle: {
-    fontSize: ['22px', '36px', '50px'],
+    fontSize: ['22px', '26px', '40px'],
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',
@@ -178,4 +128,4 @@ ListMystellar.defaultProps = {
   },
 };
 
-export default ListMystellar;
+export default StepsDomain;
