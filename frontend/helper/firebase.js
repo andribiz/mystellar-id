@@ -22,6 +22,7 @@ class FirebaseHelper {
     this.insertAddress = this.insertAddress.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.logout = this.logout.bind(this);
+    this.dbfed = this.dbfed.bind(this);
     this.database = firebase.firestore();
     this.auth = firebase.auth();
 
@@ -80,6 +81,10 @@ class FirebaseHelper {
 
   logout() {
     return this.auth.signOut();
+  }
+
+  dbfed() {
+    return this.database.collection('federation');
   }
 
   isAuthenticated(onCompleted) {

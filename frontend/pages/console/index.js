@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 
 import FormAddress from '../../containers/FormAddress';
@@ -9,6 +9,22 @@ import APISection from '../../containers/APISection';
 import ListMystellar from '../../containers/ListMyStellar';
 
 const Index = ({ row, col, list, tools }) => {
+  const [data, setData] = useState([]);
+
+  const onSubmit = value => {
+    insertAddress(
+      value.email,
+      value.address,
+      value.stellar_addr,
+      input.memo
+    ).then(res => {
+      res.errMsg === ''
+        ? setMessage({ errCode: 0, message: 'Federation successfully listed' })
+        : setMessage({ errCode: 1, message: res.errMsg });
+      setInput({ ...input, isLoading: false });
+    });
+  };
+
   return (
     <>
       <Head>
