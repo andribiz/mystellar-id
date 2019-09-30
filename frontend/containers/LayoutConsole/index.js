@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { appTheme } from '../../theme';
 import AppHolder from '../../containers/LayoutConsole/commonStyle';
@@ -11,68 +11,72 @@ import withAuthorization from '../../helper/withAuthorization';
 
 const { Content, Footer } = Layout;
 
-class MyApp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { collapsed: false };
-    this.toggleCollapsed = this.toggleCollapsed.bind(this);
-  }
+const LayoutConsole = ({ windowSize, children }) => {
+  const [state, setState] = useState({ collapsed: false, mode: 'desktop' });
 
-  toggleCollapsed() {
-    this.setState({ collapsed: !this.state.collapsed });
-    console.log(this.state.collapsed);
-  }
+  useEffect(() => {
+    console.log(windowSize);
+    if (windowSize.innerWidth > 1220 && state.mode !== 'desktop') {
+      setState({ collapsed: false, mode: 'desktop' });
+    } else if (
+      windowSize.innerWidth > 767 &&
+      windowSize.innerWidth < 1220 &&
+      state.mode !== 'mobile'
+    ) {
+      setState({ collapsed: true, mode: 'mobile' });
+    }
+  });
 
-  render() {
-    const { children } = this.props;
+  const toggleCollapsed = () => {
+    setState({ ...state, collapsed: !state.collapsed });
+  };
 
-    return (
-      <ThemeProvider theme={appTheme}>
-        <>
-          <AdminCSS />
-          <AppHolder>
-            <Layout style={{ height: '100vh' }}>
-              <Topbar
-                collapsed={this.state.collapsed}
-                toggleCollapsed={this.toggleCollapsed}
-              />
+  return (
+    <ThemeProvider theme={appTheme}>
+      <>
+        <AdminCSS />
+        <AppHolder>
+          <Layout style={{ height: '100vh' }}>
+            <Topbar
+              collapsed={state.collapsed}
+              toggleCollapsed={toggleCollapsed}
+            />
 
-              <Layout style={{ flexDirection: 'row', overflowX: 'hidden' }}>
-                <Sidebar collapsed={this.state.collapsed} />
-                <Layout
-                  className="isoContentMainLayout"
+            <Layout style={{ flexDirection: 'row', overflowX: 'hidden' }}>
+              <Sidebar collapsed={state.collapsed} />
+              <Layout
+                className="isoContentMainLayout"
+                style={{
+                  height: '100vh',
+                }}
+              >
+                <Content
+                  className="isomorphicContent"
                   style={{
-                    height: '100vh',
+                    padding: '70px 0 0',
+                    flexShrink: '0',
+                    background: '#f1f3f6',
+                    width: '100%',
                   }}
                 >
-                  <Content
-                    className="isomorphicContent"
-                    style={{
-                      padding: '70px 0 0',
-                      flexShrink: '0',
-                      background: '#f1f3f6',
-                      width: '100%',
-                    }}
-                  >
-                    {children}
-                  </Content>
-                  <Footer
-                    style={{
-                      background: '#ffffff',
-                      textAlign: 'center',
-                      borderTop: '1px solid #ededed',
-                    }}
-                  >
-                    {siteConfig.footerText}
-                  </Footer>
-                </Layout>
+                  {children}
+                </Content>
+                <Footer
+                  style={{
+                    background: '#ffffff',
+                    textAlign: 'center',
+                    borderTop: '1px solid #ededed',
+                  }}
+                >
+                  {siteConfig.footerText}
+                </Footer>
               </Layout>
             </Layout>
-          </AppHolder>
-        </>
-      </ThemeProvider>
-    );
-  }
-}
+          </Layout>
+        </AppHolder>
+      </>
+    </ThemeProvider>
+  );
+};
 
-export default withAuthorization(MyApp);
+export default withAuthorization(LayoutConsole);

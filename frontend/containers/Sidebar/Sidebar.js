@@ -11,8 +11,6 @@ import { width } from 'styled-system';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, toggleCollapsed }) => {
-  const isCollapsed = collapsed;
-  // const { app, toggleOpenDrawer, height } = this.props;
   const mode = collapsed === true ? 'vertical' : 'inline';
   let scrollheight = process.browser && window.innerWidth;
 
@@ -36,7 +34,7 @@ const Sidebar = ({ collapsed, toggleCollapsed }) => {
       <Sider
         trigger={null}
         collapsible={true}
-        collapsed={isCollapsed}
+        collapsed={collapsed}
         width={240}
         className="isomorphicSidebar"
         // hidden={true}
