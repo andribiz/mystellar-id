@@ -14,16 +14,7 @@ import NavbarWrapper, { MenuArea, MobileMenu } from './navbar.style';
 import navbar from '../../data/Navbar';
 import Link from 'next/link';
 
-const CloseModalButton = () => (
-  <Button
-    className="modalCloseBtn"
-    variant="fab"
-    onClick={() => closeModal()}
-    icon={<i className="flaticon-plus-symbol" />}
-  />
-);
-
-const Navbar = ({ user, isSimple }) => {
+const Navbar = ({ isSimple }) => {
   const { logo, navMenu } = navbar;
   const [state, setState] = useState({
     mobileMenu: false,
@@ -57,8 +48,6 @@ const Navbar = ({ user, isSimple }) => {
               </Link>
             </>
           )}
-
-          {/*<Button className="trail" title="Try for Free" href="http://localhost:3000/#home"/>*/}
 
           <Button
             className="menubar"

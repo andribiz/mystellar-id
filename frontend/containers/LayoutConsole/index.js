@@ -11,7 +11,7 @@ import withAuthorization from '../../helper/withAuthorization';
 
 const { Content, Footer } = Layout;
 
-const LayoutConsole = ({ windowSize, children }) => {
+const LayoutConsole = ({ windowSize, children, user }) => {
   const [state, setState] = useState({ collapsed: false, mode: 'desktop' });
 
   useEffect(() => {
@@ -30,6 +30,10 @@ const LayoutConsole = ({ windowSize, children }) => {
   const toggleCollapsed = () => {
     setState({ ...state, collapsed: !state.collapsed });
   };
+
+  const childrenWithProps = React.Children.map(children, child =>
+    React.cloneElement(child, { user: user })
+  );
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -59,7 +63,7 @@ const LayoutConsole = ({ windowSize, children }) => {
                     width: '100%',
                   }}
                 >
-                  {children}
+                  {childrenWithProps}
                 </Content>
                 <Footer
                   style={{

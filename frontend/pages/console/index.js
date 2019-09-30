@@ -8,23 +8,7 @@ import Container from '../../components/UI/Container';
 import APISection from '../../containers/APISection';
 import ListMystellar from '../../containers/ListMyStellar';
 
-const Index = ({ row, col, list, tools }) => {
-  const [data, setData] = useState([]);
-
-  const onSubmit = value => {
-    insertAddress(
-      value.email,
-      value.address,
-      value.stellar_addr,
-      input.memo
-    ).then(res => {
-      res.errMsg === ''
-        ? setMessage({ errCode: 0, message: 'Federation successfully listed' })
-        : setMessage({ errCode: 1, message: res.errMsg });
-      setInput({ ...input, isLoading: false });
-    });
-  };
-
+const Index = ({ row, col, list, user }) => {
   return (
     <>
       <Head>
@@ -45,7 +29,7 @@ const Index = ({ row, col, list, tools }) => {
             <FormAddress />
           </Box>
           <Box {...list}>
-            <ListMystellar />
+            <ListMystellar user={user} />
           </Box>
         </Box>
         <Box {...row}>
