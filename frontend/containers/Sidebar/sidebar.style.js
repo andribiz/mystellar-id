@@ -18,7 +18,7 @@ const SidebarWrapper = styled.div`
       flex: 0 0 240px !important;
     }
     &.ant-layout-sider {
-      @media only screen and (max-width: 500px) {
+      @media only screen and (max-width: 767px) {
         width: 0;
         min-width: 0 !important;
         max-width: 0 !important;
@@ -41,7 +41,7 @@ const SidebarWrapper = styled.div`
       text-align: center;
       overflow: hidden;
       ${borderRadius()};
-      @media only screen and (max-width: 500px) {
+      @media only screen and (max-width: 767px) {
         display: none;
       }
       h3 {
@@ -79,6 +79,11 @@ const SidebarWrapper = styled.div`
       padding-top: 35px;
       padding-bottom: 35px;
       background: transparent;
+
+      @media only screen and (max-width: 767px) {
+        display: none;
+      }
+
       a {
         text-decoration: none;
         font-weight: 400;
@@ -122,10 +127,10 @@ const SidebarWrapper = styled.div`
           color: #fff;
         }
         i {
-          color: #fff;
+          color: #18191b;
         }
         .nav-text {
-          color: #fff;
+          color: #18191b;
         }
       }
       .ant-menu-item {
