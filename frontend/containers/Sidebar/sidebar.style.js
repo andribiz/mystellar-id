@@ -17,14 +17,6 @@ const SidebarWrapper = styled.div`
       width: 240px !important;
       flex: 0 0 240px !important;
     }
-    &.ant-layout-sider {
-      @media only screen and (max-width: 767px) {
-        width: 0;
-        min-width: 0 !important;
-        max-width: 0 !important;
-        flex: 0 0 0 !important;
-      }
-    }
     &.ant-layout-sider-collapsed {
       @media only screen and (max-width: 767px) {
         width: 0;
@@ -41,9 +33,6 @@ const SidebarWrapper = styled.div`
       text-align: center;
       overflow: hidden;
       ${borderRadius()};
-      @media only screen and (max-width: 767px) {
-        display: none;
-      }
       h3 {
         a,
         i {
@@ -59,13 +48,13 @@ const SidebarWrapper = styled.div`
         ,
         img {
           padding-top: 9px;
-          padding-right: 2px;
+          padding-left: 2px;
         }
       }
     }
     &.ant-layout-sider-collapsed {
       .isoLogoWrapper {
-        padding: 0px;
+        padding: 0;
         h3 {
           a {
             font-size: 27px;
@@ -79,11 +68,6 @@ const SidebarWrapper = styled.div`
       padding-top: 35px;
       padding-bottom: 35px;
       background: transparent;
-
-      @media only screen and (max-width: 767px) {
-        display: none;
-      }
-
       a {
         text-decoration: none;
         font-weight: 400;
@@ -127,10 +111,10 @@ const SidebarWrapper = styled.div`
           color: #fff;
         }
         i {
-          color: #18191b;
+          color: #fff;
         }
         .nav-text {
-          color: #18191b;
+          color: #fff;
         }
       }
       .ant-menu-item {

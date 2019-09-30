@@ -47,7 +47,11 @@ const LayoutConsole = ({ windowSize, children, user }) => {
             />
 
             <Layout style={{ flexDirection: 'row', overflowX: 'hidden' }}>
-              <Sidebar collapsed={state.collapsed} />
+              <Sidebar
+                collapsed={state.collapsed}
+                toggleCollapsed={toggleCollapsed}
+                view={state.mode}
+              />
               <Layout
                 className="isoContentMainLayout"
                 style={{

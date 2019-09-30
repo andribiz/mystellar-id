@@ -16,8 +16,8 @@ const TopbarWrapper = styled.div`
     @media only screen and (max-width: 767px) {
       padding: ${props =>
         props['data-rtl'] === 'rtl'
-          ? '0px 15px !important'
-          : '0px 15px !important'};
+          ? '0px 260px 0px 15px !important'
+          : '0px 15px 0px 260px !important'};
     }
 
     &.collapsed {

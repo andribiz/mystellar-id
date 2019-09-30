@@ -4,10 +4,10 @@ import TopbarNotification from './topbarNotification';
 import TopbarUser from './topbarUser';
 import TopbarWrapper from './topbar.style';
 
-const Topbar = ({ toggleCollapsed, collapsed, openDrawer }) => {
+const Topbar = ({ toggleCollapsed, collapsed }) => {
   // const [state, setState] = useState({selectedItem:""})
 
-  const isCollapsed = collapsed && !openDrawer;
+  const isCollapsed = collapsed;
   const { Header } = Layout;
   const styling = {
     position: 'fixed',
