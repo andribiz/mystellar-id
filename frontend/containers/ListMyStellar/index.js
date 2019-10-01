@@ -4,13 +4,14 @@ import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
 import ListMystellarWrapper from './ListMystellar.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Divider, Table } from 'antd';
+import { Alert, Table, Divider, Popconfirm, notification } from 'antd';
 import 'antd/es/alert/style/css';
+import FormAddress from '../FormAddress';
 
 const { dbfed } = FirebaseHelper;
 const { Column } = Table;
 
-const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
+const ListMystellar = ({ titleStyle, contentWrapper, user, click }) => {
   const [data, setData] = useState([]);
 
   const toJson = doc => {
@@ -22,6 +23,28 @@ const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
       stellar_addr: dt.stellar_addr,
       memo_type: dt.memo_type,
     };
+  };
+
+  const openNotification = (type, message) => {
+    notification[type]({
+      message: message,
+    });
+  };
+
+  const remove = record => {
+    dbfed()
+      .doc(record)
+      .delete()
+      .then(function() {
+        let stellar = [...data];
+        const idx = data.findIndex(val => val.id === record);
+        stellar.splice(idx, 1);
+        setData(stellar);
+        openNotification('success', 'Data Has Been Delete');
+      })
+      .catch(function(error) {
+        openNotification('error', 'Data Cannot Be Delete');
+      });
   };
 
   const updateData = async user => {
@@ -38,11 +61,14 @@ const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
 
   useEffect(() => {
     updateData(user);
-
     return () => {
       dbfed().onSnapshot(function() {});
     };
-  }, [data]);
+  }, []);
+
+  const setVal = value => {
+    click(value);
+  };
 
   return (
     <ListMystellarWrapper>
@@ -64,9 +90,14 @@ const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Change</a>
+                <a onClick={() => setVal(record)}>Change</a>
                 <Divider type="vertical" />
-                <a>Delete</a>
+                <Popconfirm
+                  title="Sure to Delete?"
+                  onConfirm={() => remove(record.id)}
+                >
+                  <a>Delete</a>
+                </Popconfirm>
               </span>
             )}
             fixed="right"

@@ -22,6 +22,7 @@ const FormAddress = ({
   descriptionStyle,
   hintTextStyle,
   googleButtonStyle,
+  record,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [user, setUser] = useState(null);
@@ -37,12 +38,6 @@ const FormAddress = ({
       setUser(result.user);
     });
   };
-
-  useEffect(() => {
-    isAuthenticated(user => {
-      setUser(user);
-    });
-  });
 
   const handleSubmit = () => {
     if (!user) {
@@ -72,6 +67,20 @@ const FormAddress = ({
       setInput({ ...input, isLoading: false });
     });
   };
+
+  function newData() {
+    if (record) {
+      setInput({ ...input, memo: record.memo, address: record.id });
+    }
+  }
+
+  useEffect(() => {
+    console.log('did update');
+    return () => {
+      // Clean up the subscription
+      console.log('unmount');
+    };
+  }, [input]);
 
   const LoginButtonGroup = ({ isLoggedIn }) => (
     <Fragment>
@@ -140,7 +149,7 @@ const FormAddress = ({
         />
         <Input
           inputType="text"
-          value={input.stellar_addr}
+          value={record}
           onChange={res => {
             setInput({ ...input, stellar_addr: res });
           }}
