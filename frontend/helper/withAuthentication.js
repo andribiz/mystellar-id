@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FirebaseHelper from './firebase';
 const { isAuthenticated } = FirebaseHelper;
 import { useRouter } from 'next/router';
-import Launcher from '../assets/image/loader5.gif';
+import Launcher from '../containers/Launcher';
 
 const withAuthentication = redirectUrl => Component => props => {
   const [user, setUser] = useState('');
@@ -21,17 +21,7 @@ const withAuthentication = redirectUrl => Component => props => {
     return (
       <>
         {/*<h1>Loading</h1>*/}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-          }}
-        >
-          <img src={Launcher} />
-          {/*<h4>Please Wait ...</h4>*/}
-        </div>
+        <Launcher />
       </>
     );
   else if ((user && !redirectUrl) || !user)
