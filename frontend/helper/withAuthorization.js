@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FirebaseHelper from './firebase';
 const { isAuthenticated } = FirebaseHelper;
 import { useRouter } from 'next/router';
-import Launcher from '../assets/image/logo-kecil.png';
+import Launcher from '../assets/image/loader5.gif';
 
 const withAuthorization = Component => props => {
   const [user, setUser] = useState('');
@@ -31,7 +31,7 @@ const withAuthorization = Component => props => {
           }}
         >
           <img src={Launcher} />
-          <h4>Please Wait ...</h4>
+          {/*<h4>Please Wait ...</h4>*/}
         </div>
       </>
     );
