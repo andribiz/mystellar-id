@@ -78,7 +78,15 @@ const FormAddress = ({
     }
     //Mode Edit
     else {
-      updateAddress().then(res => {});
+      updateAddress(input).then(res => {
+        res.errMsg === ''
+          ? setMessage({
+              errCode: 0,
+              message: 'Federation successfully listed',
+            })
+          : setMessage({ errCode: 1, message: res.errMsg });
+        setInput({ ...input, isLoading: false });
+      });
     }
   };
 
@@ -163,15 +171,23 @@ const FormAddress = ({
           }
           {...descriptionStyle}
         />
-        <Input
-          inputType="text"
-          value={input.address}
-          onChange={res => {
-            setInput({ ...input, address: res });
-          }}
-          isMaterial
-          label="MyStellar.id Address"
-        />
+        {state.mode === 'edit' ? (
+          <Text
+            content={input.address + '*MyStellar.id'}
+            {...descriptionStyle}
+          ></Text>
+        ) : (
+          <Input
+            inputType="text"
+            value={input.address}
+            onChange={res => {
+              setInput({ ...input, address: res });
+            }}
+            isMaterial
+            label="MyStellar.id Address"
+          />
+        )}
+
         <Text
           content={
             input.address

@@ -47,6 +47,14 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
       });
   };
 
+  function MapData(item) {
+    if (item.address.substr(0, item.address.indexOf('*')) === this.address) {
+      item.stellar_addr = this.stellar_addr;
+      item.memo = this.memo;
+    }
+    return item;
+  }
+
   const updateData = async user => {
     let dt = dbfed().where('email', '==', user.email);
 
@@ -54,6 +62,8 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
       snapshot.docChanges().forEach(change => {
         if (change.type === 'added') {
           setData(data => [...data, toJson(change.doc)]);
+        } else if (change.type === 'modified') {
+          setData(data => data.map(MapData, change.doc.data()));
         }
       });
     });
@@ -67,7 +77,11 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
   }, []);
 
   const setRecord = value => {
-    loadData(value);
+    const val = {
+      ...value,
+      address: value.address.substr(0, value.address.indexOf('*')),
+    };
+    loadData(val);
   };
 
   return (
