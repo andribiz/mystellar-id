@@ -20,6 +20,7 @@ class FirebaseHelper {
     this.logout = this.logout.bind(this);
     this.register = this.register.bind(this);
     this.insertAddress = this.insertAddress.bind(this);
+    this.updateAddress = this.updateAddress.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.logout = this.logout.bind(this);
     this.dbfed = this.dbfed.bind(this);
@@ -54,6 +55,19 @@ class FirebaseHelper {
         return { errCode: error.code, message: error.message };
       });
     return res;
+  }
+
+  async updateAddress(input) {
+    const domain = '*mystellar.id';
+    try {
+      let docs = await this.database
+        .collection('federation')
+        .doc(input.address + domain)
+        .set({ ...input, stellar_addr: input.stellar_addr, memo: input.memo });
+      return { errMsg: '' };
+    } catch (err) {
+      return { errMsg: err.message };
+    }
   }
 
   async insertAddress(email, address, stellar, memo) {

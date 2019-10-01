@@ -9,6 +9,15 @@ import APISection from '../../containers/APISection';
 import ListMystellar from '../../containers/ListMyStellar';
 
 const Index = ({ row, col, list, user }) => {
+  const [record, setRecord] = useState({
+    memo: '',
+    address: '',
+    stellar_addr: '',
+  });
+
+  const loadData = val => {
+    setRecord({ ...val });
+  };
   return (
     <>
       <Head>
@@ -26,10 +35,16 @@ const Index = ({ row, col, list, user }) => {
       <Container noGutter={true}>
         <Box {...row}>
           <Box {...col}>
-            <FormAddress />
+            <FormAddress
+              title={'New Address'}
+              description={''}
+              btnCaption={'Add'}
+              user={user}
+              record={record}
+            />
           </Box>
           <Box {...list}>
-            <ListMystellar user={user} />
+            <ListMystellar user={user} loadData={loadData} />
           </Box>
         </Box>
         <Box {...row}>

@@ -13,18 +13,23 @@ import { Alert } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
+const { login, insertAddress, updateAddress, isAuthenticated } = FirebaseHelper;
 
 const FormAddress = ({
+  title,
+  description,
+  btnCaption,
   btnStyle,
   titleStyle,
   contentWrapper,
   descriptionStyle,
   hintTextStyle,
   googleButtonStyle,
+  record,
+  user,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
-  const [user, setUser] = useState(null);
+  const [state, setState] = useState({ user: user, mode: 'add' });
   const [input, setInput] = useState({
     isLoading: false,
     address: '',
@@ -34,18 +39,13 @@ const FormAddress = ({
 
   const handleSigning = () => {
     login('google').then(result => {
-      setUser(result.user);
+      setState({ ...state, user: result.user });
     });
   };
 
-  useEffect(() => {
-    isAuthenticated(user => {
-      setUser(user);
-    });
-  });
-
   const handleSubmit = () => {
-    if (!user) {
+    //Verification and validation data
+    if (!state.user) {
       // console.log(a);
       return setMessage({ errCode: 1, message: 'Please sign in first' });
     }
@@ -58,20 +58,58 @@ const FormAddress = ({
     if (!StellarBase.StrKey.isValidEd25519PublicKey(input.stellar_addr)) {
       return setMessage({ errCode: 1, message: 'Not Valid stellar address' });
     }
-
     setInput({ ...input, isLoading: true });
-    insertAddress(
-      user.email,
-      input.address,
-      input.stellar_addr,
-      input.memo
-    ).then(res => {
-      res.errMsg === ''
-        ? setMessage({ errCode: 0, message: 'Federation successfully listed' })
-        : setMessage({ errCode: 1, message: res.errMsg });
-      setInput({ ...input, isLoading: false });
-    });
+    //Mode Add
+    if (state.mode === 'add') {
+      insertAddress(
+        state.user.email,
+        input.address,
+        input.stellar_addr,
+        input.memo
+      ).then(res => {
+        res.errMsg === ''
+          ? setMessage({
+              errCode: 0,
+              message: 'Federation successfully listed',
+            })
+          : setMessage({ errCode: 1, message: res.errMsg });
+        setInput({ ...input, isLoading: false });
+      });
+    }
+    //Mode Edit
+    else {
+      updateAddress(input).then(res => {
+        res.errMsg === ''
+          ? setMessage({
+              errCode: 0,
+              message: 'Federation successfully listed',
+            })
+          : setMessage({ errCode: 1, message: res.errMsg });
+        setInput({ ...input, isLoading: false });
+      });
+    }
   };
+
+  const editData = () => {
+    if (record.address && record.address !== input.address) {
+      setInput({ ...input, ...record });
+      setState({ ...state, mode: 'edit' });
+    }
+  };
+
+  const clearData = () => {
+    record.address = '';
+    setInput({ ...input, address: '', stellar_addr: '', memo: '' });
+    setState({ ...state, mode: 'add' });
+  };
+
+  useEffect(() => {
+    if (!state.user)
+      isAuthenticated(user => {
+        setState({ ...state, user: user });
+      });
+    else editData();
+  });
 
   const LoginButtonGroup = ({ isLoggedIn }) => (
     <Fragment>
@@ -93,12 +131,20 @@ const FormAddress = ({
       )}
       <Button
         className="default"
-        title="I'm Ready"
+        title={state.mode === 'add' ? btnCaption : 'Edit'}
         onClick={handleSubmit}
         isLoading={input.isLoading}
         disabled={input.isLoading}
         {...btnStyle}
       />
+      {state.mode === 'edit' && (
+        <Button
+          title="cancel "
+          variant="textButton"
+          onClick={clearData}
+          style={{ fontSize: '14px' }}
+        />
+      )}
     </Fragment>
   );
 
@@ -113,23 +159,35 @@ const FormAddress = ({
   return (
     <FormAddressWrapper>
       <Box {...contentWrapper}>
-        <Heading content="Sign Me Up" {...titleStyle} />
+        <Heading
+          content={state.mode === 'add' ? title : 'Edit Address'}
+          {...titleStyle}
+        />
         <Text
           content={
-            (!!user ? `Hello, ${user.displayName}. ` : '') +
-            ' your desired federation address with MyStellar.id domain in form below'
+            state.user
+              ? `Hello ${state.user.displayName} ${description}`
+              : description
           }
           {...descriptionStyle}
         />
-        <Input
-          inputType="text"
-          value={input.address}
-          onChange={res => {
-            setInput({ ...input, address: res });
-          }}
-          isMaterial
-          label="MyStellar.id Address"
-        />
+        {state.mode === 'edit' ? (
+          <Text
+            content={input.address + '*MyStellar.id'}
+            {...descriptionStyle}
+          ></Text>
+        ) : (
+          <Input
+            inputType="text"
+            value={input.address}
+            onChange={res => {
+              setInput({ ...input, address: res });
+            }}
+            isMaterial
+            label="MyStellar.id Address"
+          />
+        )}
+
         <Text
           content={
             input.address
@@ -158,7 +216,7 @@ const FormAddress = ({
         />
         <AlertMessage />
         <div>
-          <LoginButtonGroup isLoggedIn={!!user} />
+          <LoginButtonGroup isLoggedIn={!!state.user} />
         </div>
       </Box>
     </FormAddressWrapper>
@@ -167,19 +225,23 @@ const FormAddress = ({
 
 // Login style props
 FormAddress.propTypes = {
-  btnStyle: PropTypes.object,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  btnCaption: PropTypes.string,
   titleStyle: PropTypes.object,
   hintTextStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
   descriptionStyle: PropTypes.object,
   googleButtonStyle: PropTypes.object,
+  record: PropTypes.object,
+  defaultUser: PropTypes.object,
 };
 
 // Login default style
 FormAddress.defaultProps = {
   // Title default style
   titleStyle: {
-    fontSize: ['22px', '36px', '50px'],
+    fontSize: ['22px', '36px', '40px'],
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',

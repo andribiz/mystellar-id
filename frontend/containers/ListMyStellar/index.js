@@ -4,25 +4,56 @@ import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
 import ListMystellarWrapper from './ListMystellar.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Divider, Table } from 'antd';
+import { Alert, Table, Divider, Popconfirm, notification } from 'antd';
 import 'antd/es/alert/style/css';
+import FormAddress from '../FormAddress';
 
 const { dbfed } = FirebaseHelper;
 const { Column } = Table;
 
-const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
+const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
   const [data, setData] = useState([]);
 
   const toJson = doc => {
     const dt = doc.data();
     return {
-      id: doc.id,
+      address: doc.id,
       email: dt.email,
       memo: dt.memo,
       stellar_addr: dt.stellar_addr,
       memo_type: dt.memo_type,
     };
   };
+
+  const openNotification = (type, message) => {
+    notification[type]({
+      message: message,
+    });
+  };
+
+  const remove = record => {
+    dbfed()
+      .doc(record)
+      .delete()
+      .then(function() {
+        let stellar = [...data];
+        const idx = data.findIndex(val => val.id === record);
+        stellar.splice(idx, 1);
+        setData(stellar);
+        openNotification('success', 'Data Has Been Delete');
+      })
+      .catch(function(error) {
+        openNotification('error', 'Data Cannot Be Delete');
+      });
+  };
+
+  function MapData(item) {
+    if (item.address.substr(0, item.address.indexOf('*')) === this.address) {
+      item.stellar_addr = this.stellar_addr;
+      item.memo = this.memo;
+    }
+    return item;
+  }
 
   const updateData = async user => {
     let dt = dbfed().where('email', '==', user.email);
@@ -31,6 +62,8 @@ const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
       snapshot.docChanges().forEach(change => {
         if (change.type === 'added') {
           setData(data => [...data, toJson(change.doc)]);
+        } else if (change.type === 'modified') {
+          setData(data => data.map(MapData, change.doc.data()));
         }
       });
     });
@@ -38,11 +71,18 @@ const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
 
   useEffect(() => {
     updateData(user);
-
     return () => {
       dbfed().onSnapshot(function() {});
     };
-  }, [data]);
+  }, []);
+
+  const setRecord = value => {
+    const val = {
+      ...value,
+      address: value.address.substr(0, value.address.indexOf('*')),
+    };
+    loadData(val);
+  };
 
   return (
     <ListMystellarWrapper>
@@ -50,23 +90,33 @@ const ListMystellar = ({ titleStyle, contentWrapper, user }) => {
         <Heading content="Your Addresses" {...titleStyle} />
 
         <Table dataSource={data} scroll={{ x: '200%' }}>
-          <Column title="Federation" dataIndex="id" key="id" fixed="left" />
-          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
-          <Column title="Memo" dataIndex="memo" key="memo" />
+          <Column
+            title="Federation"
+            dataIndex="address"
+            key="address"
+            fixed="left"
+          />
           <Column
             title="Stellar Addr"
             dataIndex="stellar_addr"
             key="stellar_addr"
           />
+          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
+          <Column title="Memo" dataIndex="memo" key="memo" />
 
           <Column
             title="Action"
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Change</a>
+                <a onClick={() => setRecord(record)}>Change</a>
                 <Divider type="vertical" />
-                <a>Delete</a>
+                <Popconfirm
+                  title="Sure to Delete?"
+                  onConfirm={() => remove(record.address)}
+                >
+                  <a>Delete</a>
+                </Popconfirm>
               </span>
             )}
             fixed="right"
@@ -88,7 +138,7 @@ ListMystellar.propTypes = {
 ListMystellar.defaultProps = {
   // Title default style
   titleStyle: {
-    fontSize: ['22px', '36px', '50px'],
+    fontSize: ['22px', '36px', '40px'],
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',
