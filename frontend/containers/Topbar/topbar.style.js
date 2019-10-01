@@ -34,13 +34,12 @@ const TopbarWrapper = styled.div`
     .isoLeft {
       display: flex;
       align-items: center;
-      
+
       @media only screen and (max-width: 767px) {
-          flex: 1, flexDirection: 'row',
-          margin:0,
-          padding:0;
+        margin: ${props =>
+          props['data-rtl'] === 'rtl' ? '0 0 0 20px' : '0 20px 0 0'};
       }
-      
+
       .triggerBtn {
         width: 24px;
         height: 100%;
@@ -107,8 +106,8 @@ const TopbarWrapper = styled.div`
             width: 20px;
             height: 20px;
             display: -webkit-inline-flex;
-            display: -ms-inline-flex;d
-            display: inline-flex;
+            display: -ms-inline-flex;
+            ddisplay: inline-flex;
             align-items: center;
             justify-content: center;
             text-align: center;
