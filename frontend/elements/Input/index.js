@@ -19,14 +19,13 @@ const Input = ({
   const [state, setState] = useState({
     toggle: false,
     focus: false,
-    value: value
   });
 
   // toggle function
   const handleToggle = () => {
     setState({
       ...state,
-      toggle: !state.toggle
+      toggle: !state.toggle,
     });
   };
 
@@ -34,7 +33,7 @@ const Input = ({
   const handleOnFocus = event => {
     setState({
       ...state,
-      focus: true
+      focus: true,
     });
     onFocus(event);
   };
@@ -43,23 +42,19 @@ const Input = ({
   const handleOnBlur = event => {
     setState({
       ...state,
-      focus: false
+      focus: false,
     });
     onBlur(event);
   };
 
   // handle input value
   const handleOnChange = event => {
-    setState({
-      ...state,
-      value: event.target.value
-    });
     onChange(event.target.value);
   };
 
   // get input focus class
   const getInputFocusClass = () => {
-    if (state.focus === true || state.value !== '') {
+    if (state.focus === true || value !== '') {
       return 'is-focus';
     } else {
       return '';
@@ -106,7 +101,7 @@ const Input = ({
           {...props}
           id={htmlFor}
           name={htmlFor}
-          value={state.value}
+          value={value}
           onChange={handleOnChange}
           onBlur={handleOnBlur}
           onFocus={handleOnFocus}
@@ -122,7 +117,7 @@ const Input = ({
             id={htmlFor}
             name={htmlFor}
             type={state.toggle ? 'password' : 'text'}
-            value={state.value}
+            value={value}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
             onFocus={handleOnFocus}
@@ -147,7 +142,7 @@ const Input = ({
             id={htmlFor}
             name={htmlFor}
             type={inputType}
-            value={state.value}
+            value={value}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
             onFocus={handleOnFocus}
@@ -192,7 +187,7 @@ Input.propTypes = {
     'email',
     'password',
     'number',
-    'textarea'
+    'textarea',
   ]),
 
   /** Add icon in input field. This prop will not work with password
@@ -219,7 +214,7 @@ Input.propTypes = {
    * @param {object} event The event source of the callback.
    * You can pull out the new value by accessing `event.target.value`.
    */
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };
 
 /** Inout default type. */
@@ -229,7 +224,7 @@ Input.defaultProps = {
   iconPosition: 'left',
   onBlur: () => {},
   onFocus: () => {},
-  onChange: () => {}
+  onChange: () => {},
 };
 
 export default Input;

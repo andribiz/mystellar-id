@@ -125,7 +125,7 @@ ListUsers.propTypes = {
 ListUsers.defaultProps = {
   // Title default style
   titleStyle: {
-    fontSize: ['22px', '36px', '50px'],
+    fontSize: ['22px', '36px', '40px'],
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',

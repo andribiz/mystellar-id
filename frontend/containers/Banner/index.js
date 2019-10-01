@@ -6,9 +6,9 @@ import Heading from '../../elements/Heading';
 import FeatureBlock from '../../components/FeatureBlock';
 import ParticlesComponent from '../particles';
 import Container from '../../components/UI/Container';
-import {BannerCircleShape, BannerSquareShape} from '../app.style';
+import { BannerCircleShape, BannerSquareShape } from '../app.style';
 
-import FormAddress from "../FormAddress";
+import FormAddress from '../FormAddress';
 
 const DomainSection = ({
   SectionWrapper,
@@ -17,7 +17,7 @@ const DomainSection = ({
   title,
   smallTitle,
   description,
-  formArea
+  formArea,
 }) => {
   return (
     <Box {...SectionWrapper} id="home">
@@ -27,15 +27,20 @@ const DomainSection = ({
       <Container>
         <Box {...row}>
           <Box {...col}>
-            <FeatureBlock
-              title={<Heading {...title} />}
-            />
+            <FeatureBlock title={<Heading {...title} />} />
             <FeatureBlock
               title={<Heading {...smallTitle} />}
-              description={<Text {...description}/> }/>
+              description={<Text {...description} />}
+            />
           </Box>
           <Box {...formArea}>
-            <FormAddress/>
+            <FormAddress
+              title={'Sign Me Up'}
+              description={
+                'Get your desired federation address with MyStellar.id domain in form below'
+              }
+              btnCaption={"I'm Ready"}
+            />
           </Box>
         </Box>
       </Container>
@@ -82,7 +87,7 @@ DomainSection.defaultProps = {
   formArea: {
     width: ['100%', '100%', '50%', '50%', '50%'],
     ml: 'auto',
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
   },
   title: {
     content: 'FREE stellar federation Address',

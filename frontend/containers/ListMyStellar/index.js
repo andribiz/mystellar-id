@@ -11,13 +11,13 @@ import FormAddress from '../FormAddress';
 const { dbfed } = FirebaseHelper;
 const { Column } = Table;
 
-const ListMystellar = ({ titleStyle, contentWrapper, user, click }) => {
+const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
   const [data, setData] = useState([]);
 
   const toJson = doc => {
     const dt = doc.data();
     return {
-      id: doc.id,
+      address: doc.id,
       email: dt.email,
       memo: dt.memo,
       stellar_addr: dt.stellar_addr,
@@ -66,8 +66,8 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, click }) => {
     };
   }, []);
 
-  const setVal = value => {
-    click(value);
+  const setRecord = value => {
+    loadData(value);
   };
 
   return (
@@ -76,25 +76,30 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, click }) => {
         <Heading content="Your Addresses" {...titleStyle} />
 
         <Table dataSource={data} scroll={{ x: '200%' }}>
-          <Column title="Federation" dataIndex="id" key="id" fixed="left" />
-          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
-          <Column title="Memo" dataIndex="memo" key="memo" />
+          <Column
+            title="Federation"
+            dataIndex="address"
+            key="address"
+            fixed="left"
+          />
           <Column
             title="Stellar Addr"
             dataIndex="stellar_addr"
             key="stellar_addr"
           />
+          <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
+          <Column title="Memo" dataIndex="memo" key="memo" />
 
           <Column
             title="Action"
             key="Action"
             render={(text, record) => (
               <span>
-                <a onClick={() => setVal(record)}>Change</a>
+                <a onClick={() => setRecord(record)}>Change</a>
                 <Divider type="vertical" />
                 <Popconfirm
                   title="Sure to Delete?"
-                  onConfirm={() => remove(record.id)}
+                  onConfirm={() => remove(record.address)}
                 >
                   <a>Delete</a>
                 </Popconfirm>
@@ -119,7 +124,7 @@ ListMystellar.propTypes = {
 ListMystellar.defaultProps = {
   // Title default style
   titleStyle: {
-    fontSize: ['22px', '36px', '50px'],
+    fontSize: ['22px', '36px', '40px'],
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',

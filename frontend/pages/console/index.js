@@ -8,16 +8,15 @@ import Container from '../../components/UI/Container';
 import APISection from '../../containers/APISection';
 import ListMystellar from '../../containers/ListMyStellar';
 
-const Index = ({ row, col, list, user, record }) => {
-  const [records, setEdit] = useState({
-    email: '',
+const Index = ({ row, col, list, user }) => {
+  const [record, setRecord] = useState({
+    memo: '',
     address: '',
-    id: '',
     stellar_addr: '',
   });
 
   const loadData = val => {
-    setEdit(val);
+    setRecord({ ...val });
   };
   return (
     <>
@@ -36,10 +35,16 @@ const Index = ({ row, col, list, user, record }) => {
       <Container noGutter={true}>
         <Box {...row}>
           <Box {...col}>
-            <FormAddress record={records} />
+            <FormAddress
+              title={'New Address'}
+              description={''}
+              btnCaption={'Add'}
+              user={user}
+              record={record}
+            />
           </Box>
           <Box {...list}>
-            <ListMystellar user={user} click={loadData} />
+            <ListMystellar user={user} loadData={loadData} />
           </Box>
         </Box>
         <Box {...row}>
