@@ -48,7 +48,7 @@ const SidebarWrapper = styled.div`
         ,
         img {
           padding-top: 9px;
-          padding-left: 2px;
+          padding-right: 2px;
         }
       }
     }
