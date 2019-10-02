@@ -11,7 +11,6 @@ const withAuthentication = redirectUrl => Component => props => {
   useEffect(() => {
     if (user === '') {
       isAuthenticated(user => {
-        console.log(user);
         setUser(user);
         if (user && redirectUrl) router.push(redirectUrl);
       });

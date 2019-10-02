@@ -15,7 +15,6 @@ const LayoutConsole = ({ windowSize, children, user }) => {
   const [state, setState] = useState({ collapsed: false, mode: 'desktop' });
 
   useEffect(() => {
-    console.log(windowSize);
     if (windowSize.innerWidth > 1220 && state.mode !== 'desktop') {
       setState({ collapsed: false, mode: 'desktop' });
     } else if (
