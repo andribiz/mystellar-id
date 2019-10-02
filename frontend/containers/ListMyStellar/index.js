@@ -31,22 +31,6 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
     });
   };
 
-  const remove = record => {
-    dbfed()
-      .doc(record)
-      .delete()
-      .then(function() {
-        let stellar = [...data];
-        const idx = data.findIndex(val => val.id === record);
-        stellar.splice(idx, 1);
-        setData(stellar);
-        openNotification('success', 'Data Has Been Delete');
-      })
-      .catch(function(error) {
-        openNotification('error', 'Data Cannot Be Delete');
-      });
-  };
-
   function MapData(item) {
     if (item.address.substr(0, item.address.indexOf('*')) === this.address) {
       item.stellar_addr = this.stellar_addr;
