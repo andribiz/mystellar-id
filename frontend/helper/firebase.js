@@ -21,6 +21,7 @@ class FirebaseHelper {
     this.register = this.register.bind(this);
     this.insertAddress = this.insertAddress.bind(this);
     this.updateAddress = this.updateAddress.bind(this);
+    this.dbUser = this.dbUser.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.logout = this.logout.bind(this);
     this.dbfed = this.dbfed.bind(this);
@@ -50,6 +51,9 @@ class FirebaseHelper {
   async register(email, password) {
     const res = await this.auth
       .createUserWithEmailAndPassword(email, password)
+      .then(result => {
+        return result;
+      })
       .catch(error => {
         console.log(`${error.code} ${error.message}`);
         return { errCode: error.code, message: error.message };
@@ -99,6 +103,10 @@ class FirebaseHelper {
 
   dbfed() {
     return this.database.collection('federation');
+  }
+
+  dbUser() {
+    return this.database.collection('user');
   }
 
   isAuthenticated(onCompleted) {

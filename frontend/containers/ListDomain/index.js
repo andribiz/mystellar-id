@@ -8,19 +8,8 @@ import FirebaseHelper from '../../helper/firebase';
 import { Alert, Divider, Table } from 'antd';
 import 'antd/es/alert/style/css';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
+const { login, insertAddress, isAuthenticated, dbUser } = FirebaseHelper;
 const { Column, ColumnGroup } = Table;
-
-const data = [
-  {
-    key: '1',
-    domain: 'mystellar.id',
-  },
-  {
-    key: '2',
-    domain: 'bizoft.id',
-  },
-];
 
 const ListDomain = ({
   btnStyle,
@@ -32,6 +21,7 @@ const ListDomain = ({
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [user, setUser] = useState(null);
+  const [data, setData] = useState([]);
   const [input, setInput] = useState({
     isLoading: false,
     address: '',
@@ -45,11 +35,53 @@ const ListDomain = ({
     });
   };
 
+  const remove = record => {
+    dbUser()
+      .doc(user.uid)
+      .collection('domains')
+      .doc(record.id)
+      .delete()
+      .then(res => {
+        setData(data => data.filter(row => row.id != record.id));
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  function toJson(doc) {
+    return {
+      id: doc.id,
+      domain: doc.data().domain,
+    };
+  }
+  const getData = async () => {
+    if (user) {
+      let dt = [];
+      await dbUser()
+        .doc(user.uid)
+        .collection('domains')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            setData(data => [...data, toJson(doc)]);
+          });
+        })
+        .catch(function(error) {
+          console.log('Error getting documents: ', error);
+        });
+    }
+  };
+
   useEffect(() => {
-    isAuthenticated(user => {
-      setUser(user);
-    });
-  });
+    isAuthenticated(
+      user => {
+        setUser(user);
+        getData();
+      },
+      [user, data]
+    );
+  }, [user]);
 
   const handleSubmit = () => {};
 
@@ -86,7 +118,7 @@ const ListDomain = ({
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Delete</a>
+                <a onClick={() => remove(record)}>Delete</a>
               </span>
             )}
           />
