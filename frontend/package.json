@@ -2,7 +2,6 @@
   "name": "frontend-landing",
   "version": "1.0.0",
   "main": "index.js",
-
   "scripts": {
     "dev": "node_modules/.bin/next",
     "build": "node_modules/.bin/next build",
@@ -17,17 +16,18 @@
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "latest",
     "antd": "^3.23.3",
+    "cors": "^2.8.5",
     "firebase": "^6.6.1",
-    "firebase-functions": "^3.2.0",
     "firebase-admin": "^8.6.0",
+    "firebase-functions": "^3.2.0",
     "next": "^9.0.6",
     "next-compose-plugins": "^2.2.0",
     "next-fonts": "^0.17.0",
     "next-optimized-images": "^2.5.3",
     "next-transpile-modules": "^2.3.1",
     "prop-types": "^15.7.2",
-    "react": "^16.8.6",
     "rc-tabs": "^9.6.7",
+    "react": "^16.8.6",
     "react-accessible-accordion": "^3.0.0",
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-content-loader": "^4.2.2",
@@ -47,12 +47,12 @@
     "stellar-sdk": "^2.0.0-rc.2",
     "styled-components": "^4.3.2",
     "styled-system": "^4.1.0",
-    "styled-theme": "^0.3.3",
-    "cors": "^2.8.5"
+    "styled-theme": "^0.3.3"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
     "docz": "^0.13.7",
+    "firebase-functions-test": "^0.1.6",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-optipng": "^6.0.0",
     "imagemin-svgo": "^7.0.0"

@@ -19,6 +19,6 @@
       }]
   },
   "functions": {
-    "source": "dist/functions"
+    "source": "frontend/functions"
   }
 }

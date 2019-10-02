@@ -5,29 +5,13 @@ import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
 import ListMystellarWrapper from './ListDomain.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Table, Popconfirm, notification, Divider } from 'antd';
-import 'antd/es/alert/style/css';
+import { notification, Popconfirm, Table } from 'antd';
 
 const { deleteDomain, onSnapshotDomain } = FirebaseHelper;
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 
-const ListDomain = ({
-  btnStyle,
-  titleStyle,
-  contentWrapper,
-  descriptionStyle,
-  hintTextStyle,
-  googleButtonStyle,
-  user,
-}) => {
-  const [msg, setMessage] = useState({ errCode: -1, message: '' });
+const ListDomain = ({ titleStyle, contentWrapper, user }) => {
   const [data, setData] = useState([]);
-  const [input, setInput] = useState({
-    isLoading: false,
-    address: '',
-    stellar_addr: '',
-    memo: '',
-  });
 
   const openNotification = (type, message) => {
     notification[type]({
@@ -39,49 +23,32 @@ const ListDomain = ({
     const result = await deleteDomain(user, record);
     if (result.errMsg === '') {
       setData(data => data.filter(row => row.id != record.id));
-      openNotification('success', 'Data Has Been Delete');
+      openNotification('success', 'Data has been deleted');
     } else {
       openNotification('error', result.errMsg);
     }
   };
 
-  function toJson(doc) {
+  const toJson = doc => {
     return {
       id: doc.id,
       domain: doc.data().domain,
     };
-  }
+  };
 
   const onSnapshot = snapshot => {
-    let newData = [];
     snapshot.docChanges().forEach(change => {
-      newData.push(toJson(change.doc));
+      if (change.type === 'added')
+        setData(data => [...data, toJson(change.doc)]);
     });
-    setData(newData);
   };
 
   useEffect(() => {
-    const snap = onSnapshotDomain(user, onSnapshot);
-
+    const unsubscribe = onSnapshotDomain(user, onSnapshot);
     return () => {
-      snap();
+      unsubscribe();
     };
-  }, [input]);
-
-  const handleSubmit = () => {};
-
-  const LoginButtonGroup = ({ isLoggedIn }) => (
-    <Fragment>
-      <Button
-        className="default"
-        title="I'm Ready"
-        onClick={handleSubmit}
-        isLoading={input.isLoading}
-        disabled={input.isLoading}
-        {...btnStyle}
-      />
-    </Fragment>
-  );
+  }, []);
 
   return (
     <ListMystellarWrapper>
@@ -95,9 +62,9 @@ const ListDomain = ({
             key="Action"
             render={(text, record) => (
               <span>
-                <Divider type="vertical" />
                 <Popconfirm
-                  title="Sure to Delete?"
+                  title="Are you Sure to delete this domain?"
+                  okText={'Delete'}
                   onConfirm={() => removeDomain(user, record)}
                 >
                   <a>Delete</a>
@@ -113,12 +80,9 @@ const ListDomain = ({
 
 // Login style props
 ListDomain.propTypes = {
-  btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
-  hintTextStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
-  descriptionStyle: PropTypes.object,
-  googleButtonStyle: PropTypes.object,
+  user: PropTypes.object,
 };
 
 // Login default style
@@ -132,40 +96,10 @@ ListDomain.defaultProps = {
     mt: '35px',
     mb: '10px',
   },
-  // Description default style
-  descriptionStyle: {
-    color: 'rgba(52, 61, 72, 0.8)',
-    fontSize: '15px',
-    lineHeight: '26px',
-    letterSpacing: '-0.025em',
-    mb: '23px',
-    ml: '1px',
-  },
-  hintTextStyle: {
-    color: 'rgba(52, 61, 72, 0.8)',
-    fontSize: '12px',
-    lineHeight: '20px',
-    letterSpacing: '-0.025em',
-    mb: '10px',
-    mt: '-20px',
-    ml: '1px',
-  },
-  // Content wrapper style
   contentWrapper: {
     pl: ['17px', '32px', '38px', '40px', '56px'],
     pr: '32px',
     pb: '32px',
-  },
-  // Default button style
-  btnStyle: {
-    minWidth: '156px',
-    fontSize: '14px',
-    fontWeight: '500',
-  },
-  // Google button style
-  googleButtonStyle: {
-    bg: '#ffffff',
-    color: '#343D48',
   },
 };
 
