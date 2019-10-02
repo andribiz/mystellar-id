@@ -91,7 +91,7 @@ const FormAddress = ({
   };
 
   const editData = () => {
-    if (record.address && record.address !== input.address) {
+    if (record && record.address && record.address !== input.address) {
       setInput({ ...input, ...record });
       setState({ ...state, mode: 'edit' });
     }
