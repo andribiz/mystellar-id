@@ -13,7 +13,7 @@ import { Alert, Steps } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
+const { login, insertDomain, isAuthenticated } = FirebaseHelper;
 const { Step } = Steps;
 
 const StepsDomain = ({
@@ -27,14 +27,40 @@ const StepsDomain = ({
   const [user, setUser] = useState(null);
   const [input, setInput] = useState({
     isLoading: false,
-    address: '',
-    stellar_addr: '',
-    memo: '',
+    domain: '',
   });
 
-  useEffect(() => {});
+  useEffect(() => {
+    isAuthenticated(user => {
+      setUser(user);
+    });
+  });
 
-  const handleSubmit = () => {};
+  const AlertMessage = () => {
+    if (msg.errCode === 0)
+      return <Alert message={msg.message} type="success" showIcon />;
+    else if (msg.errCode === 1)
+      return <Alert message={msg.message} type="error" showIcon />;
+    return null;
+  };
+
+  const handleSubmit = async ev => {
+    ev.preventDefault();
+    setInput({ ...input, isLoading: true });
+    const res = await insertDomain(user, input.domain);
+    if (res.errMsg === '') {
+      setMessage({
+        errCode: 0,
+        message: 'Federation successfully listed',
+      });
+      setInput({ ...input, isLoading: false });
+    }
+    //Mode Edit
+    else {
+      setInput({ ...input, isLoading: false });
+      setMessage({ errCode: 1, message: res.errMsg });
+    }
+  };
 
   const LoginButtonGroup = ({ isLoggedIn }) => (
     <Fragment>
@@ -60,9 +86,18 @@ const StepsDomain = ({
           <Step key={'3'} title={'Finish'} />
         </Steps>
         <Box>
-          <h1>Halo 1</h1>
+          <Input
+            inputType="text"
+            onChange={res => {
+              setInput({ ...input, domain: res });
+            }}
+            value={input.domain}
+            isMaterial
+            label="Domain"
+          />
         </Box>
         <div>
+          <AlertMessage />
           <LoginButtonGroup isLoggedIn={!!user} />
         </div>
       </Box>

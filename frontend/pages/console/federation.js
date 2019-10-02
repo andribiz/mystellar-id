@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import StepsDomain from '../../containers/StepsDomain';
 import ListDomain from '../../containers/ListDomain';
 
-const Federation = ({ row, col, list }) => {
+const Federation = ({ row, col, list, user }) => {
   // const size = process.browser && useWindowSize();
   return (
     <>
@@ -28,7 +28,7 @@ const Federation = ({ row, col, list }) => {
             <StepsDomain />
           </Box>
           <Box {...list}>
-            <ListDomain />
+            <ListDomain user={user} />
           </Box>
         </Box>
       </Container>
