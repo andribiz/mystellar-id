@@ -19,7 +19,6 @@ const withAuthentication = redirectUrl => Component => props => {
   if (user === '')
     return (
       <>
-        {/*<h1>Loading</h1>*/}
         <Launcher />
       </>
     );
