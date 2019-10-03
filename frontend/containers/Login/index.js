@@ -17,7 +17,7 @@ import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
 import Router from 'next/router';
-const { login, register, isAuthenticated, dbUser } = FirebaseHelper;
+const { login, register, insertUser } = FirebaseHelper;
 
 const Login = ({
   row,
@@ -42,18 +42,17 @@ const Login = ({
     loginMessage: '',
   });
 
-  const handleLogin = async method => {
+  const handleLogin = method => {
     setStateNotify({ isLoading: true, loginMessage: '' });
-    await login(method, state.email, state.password)
+    login(method, state.email, state.password)
       .then(res => {
         if (res.additionalUserInfo.isNewUser) {
-          dbUser()
-            .doc(res.user.uid)
-            .set({
-              email: res.user.email,
-              name: res.user.displayName,
-              profile_pic: res.user.photoURL,
-            })
+          insertUser(
+            res.user.uid,
+            res.user.email,
+            res.user.displayName,
+            res.user.photoURL
+          )
             .then(() => {
               console.log('Document successfully written!');
               setStateNotify({ isLoading: false, loginMessage: '' });
@@ -73,25 +72,20 @@ const Login = ({
 
     register(stateReg.email, stateReg.password)
       .then(res => {
-        if (res.errCode)
-          setStateNotify({ isLoading: false, errMessage: res.message });
-        else {
-          dbUser()
-            .doc(res.user.uid)
-            .set({
-              email: stateReg.email,
-              name: stateReg.name,
-            })
-            .then(() => {
-              console.log('Document successfully written!');
-              setStateNotify({ isLoading: false, loginMessage: '' });
-            })
-            .catch(e => {
-              setStateNotify({ isLoading: false, loginMessage: e.message });
-            });
-
-          setStateNotify({ isLoading: false, errMessage: '' });
-        }
+        insertUser(
+          res.user.uid,
+          res.user.email,
+          stateReg.name,
+          res.user.photoURL
+        )
+          .then(() => {
+            console.log('Document successfully written!');
+            setStateNotify({ isLoading: false, loginMessage: '' });
+          })
+          .catch(e => {
+            setStateNotify({ isLoading: false, loginMessage: e.message });
+          });
+        setStateNotify({ isLoading: false, errMessage: '' });
       })
       .catch(error => {
         setStateNotify({ isLoading: false, errMessage: error.message });
