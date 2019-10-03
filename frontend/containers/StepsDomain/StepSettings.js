@@ -5,7 +5,7 @@ import StepSettingsWrapper from './StepSettings.style';
 import Text from '../../elements/Text';
 import PropTypes from 'prop-types';
 import Button from '../../elements/Button';
-import { Alert } from 'antd';
+import { Alert, Form } from 'antd';
 
 const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
@@ -23,12 +23,36 @@ const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
 
   return (
     <StepSettingsWrapper>
-      <div className="card">
+      {/*<Box className="image">*/}
+      {/*  <img src={ImageSettings} className="streach"/>*/}
+      {/*</Box>*/}
+      <Box className="card">
         <Heading content={'Upload Config File'} {...titleStyle} />
+        {/*<Text*/}
+        {/*  content={*/}
+        {/*    'Upload this file to your server with location ./.well-known/stellar.toml. ' +*/}
+        {/*    'The request should be https://yourdomain/.well-known/stellar.toml.' +*/}
+        {/*    'Domain must be use https. file must be corss. More help click this link'*/}
+        {/*  }*/}
+        {/*  {...descriptionStyle}*/}
+        {/*/>*/}
         <Text
+          className="text"
           content={
-            'Upload this file to your server with location ./.well-known/stellar.toml. ' +
-            'The request should be https://yourdomain/.well-known/stellar.toml' +
+            'Upload this file to your server with location ./.well-known/stellar.toml. '
+          }
+          {...descriptionStyle}
+        />
+        <Text
+          className="text"
+          content={
+            'The request should be https://yourdomain/.well-known/stellar.toml.'
+          }
+          {...descriptionStyle}
+        />
+        <Text
+          className="text"
+          content={
             'Domain must be use https. file must be corss. More help click this link'
           }
           {...descriptionStyle}
@@ -38,28 +62,31 @@ const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
           content={'Validate your setting with this config'}
           {...descriptionStyle}
         />
-      </div>
-      <Box>
+      </Box>
+
+      <Box className="button">
         <AlertMessage />
-        <Box>
-          <Button
-            className="default"
-            title="Test"
-            isLoading={state.isLoading}
-            disabled={state.isLoading}
-            {...btnStyle}
-          />
-        </Box>
-        <Box>
-          <Button
-            className="default"
-            title="Next"
-            onClick={nextStep}
-            isLoading={state.isLoading}
-            disabled={state.isLoading}
-            {...btnStyle}
-          />
-        </Box>
+        <Form layout="inline">
+          <Form.Item>
+            <Button
+              className="default"
+              title="Test"
+              isLoading={state.isLoading}
+              disabled={state.isLoading}
+              {...btnStyle}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              className="default"
+              title="Next"
+              onClick={nextStep}
+              isLoading={state.isLoading}
+              disabled={state.isLoading}
+              {...btnStyle}
+            />
+          </Form.Item>
+        </Form>
       </Box>
     </StepSettingsWrapper>
   );
@@ -91,7 +118,7 @@ StepSetting.defaultProps = {
     fontSize: '15px',
     lineHeight: '26px',
     letterSpacing: '-0.025em',
-    mb: '23px',
+    mb: '1px',
     ml: '1px',
   },
 };

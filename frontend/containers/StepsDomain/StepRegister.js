@@ -5,9 +5,10 @@ import FirebaseHelper from '../../helper/firebase';
 import Box from '../../elements/Box';
 import PropTypes from 'prop-types';
 import Button from '../../elements/Button';
-import { Alert } from 'antd';
+import { Alert, Form } from 'antd';
 import Text from '../../elements/Text';
 import Heading from '../../elements/Heading';
+import ImageRegister from '../../assets/image/bg-register-new.png';
 
 const { insertDomain } = FirebaseHelper;
 
@@ -52,14 +53,17 @@ const StepRegister = ({
 
   return (
     <StepRegisterWrapper>
-      <Heading content={'Register your Domain'} {...titleStyle} />
-      <Text
-        content={
-          'Add your own domain to register your own federation domain name'
-        }
-        {...descriptionStyle}
-      />
+      {/*<Box className="image">*/}
+      {/*  <img src={ImageRegister} className="streach"/>*/}
+      {/*</Box>*/}
       <Box className="card">
+        <Heading content={'Register your Domain'} {...titleStyle} />
+        <Text
+          content={
+            'Add your own domain to register your own federation domain name'
+          }
+          {...descriptionStyle}
+        />
         <Input
           inputType="text"
           onChange={res => {
@@ -70,28 +74,50 @@ const StepRegister = ({
           label="Domain"
         />
       </Box>
-      <Box>
-        <AlertMessage />
-        <Box>
-          <Button
-            className="default"
-            title="Add"
-            onClick={handleSubmit}
-            isLoading={input.isLoading}
-            disabled={input.isLoading}
-            {...btnStyle}
-          />
-        </Box>
-        <Box>
-          <Button
-            className="default"
-            title="Next"
-            onClick={nextStep}
-            isLoading={input.isLoading}
-            disabled={input.isLoading}
-            {...btnStyle}
-          />
-        </Box>
+      <Box className="form">
+        <Form layout="inline">
+          <Form.Item>
+            <Button
+              className="default"
+              title="Add"
+              onClick={handleSubmit}
+              isLoading={input.isLoading}
+              disabled={input.isLoading}
+              {...btnStyle}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              className="default"
+              title="Next"
+              onClick={nextStep}
+              isLoading={input.isLoading}
+              disabled={input.isLoading}
+              {...btnStyle}
+            />
+          </Form.Item>
+        </Form>
+        {/*<AlertMessage />*/}
+        {/*<Box>*/}
+        {/*  <Button*/}
+        {/*    className="default"*/}
+        {/*    title="Add"*/}
+        {/*    onClick={handleSubmit}*/}
+        {/*    isLoading={input.isLoading}*/}
+        {/*    disabled={input.isLoading}*/}
+        {/*    {...btnStyle}*/}
+        {/*  />*/}
+        {/*</Box>*/}
+        {/*<Box>*/}
+        {/*  <Button*/}
+        {/*    className="default"*/}
+        {/*    title="Next"*/}
+        {/*    onClick={nextStep}*/}
+        {/*    isLoading={input.isLoading}*/}
+        {/*    disabled={input.isLoading}*/}
+        {/*    {...btnStyle}*/}
+        {/*  />*/}
+        {/*</Box>*/}
       </Box>
     </StepRegisterWrapper>
   );

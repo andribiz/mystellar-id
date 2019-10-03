@@ -10,7 +10,7 @@
     "url": "https://github.com/andribiz/mystellar-id"
   },
   "engines": {
-    "node": "10"
+    "node": "12.10.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",

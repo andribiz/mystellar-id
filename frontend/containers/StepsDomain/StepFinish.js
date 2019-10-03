@@ -6,11 +6,15 @@ import PropTypes from 'prop-types';
 import Text from '../../elements/Text';
 import Button from '../../elements/Button';
 import Link from 'next/link';
+import ImageFinish from '../../assets/image/bg-finish-new.png';
 
 const StepFinish = ({ titleStyle, btnStyle, descriptionStyle }) => {
   return (
     <StepFinishWrapper>
-      <div class="card">
+      <Box className="image">
+        <img src={ImageFinish} className="streach" />
+      </Box>
+      <Box className="card">
         <Heading content={'Horaay...'} {...titleStyle} />
         <Text
           content={
@@ -18,8 +22,8 @@ const StepFinish = ({ titleStyle, btnStyle, descriptionStyle }) => {
           }
           {...descriptionStyle}
         />
-      </div>
-      <Box>
+      </Box>
+      <Box className="button">
         <Link href={'/console/federation-user'}>
           <Button className="default" title="Create Your User" {...btnStyle} />
         </Link>

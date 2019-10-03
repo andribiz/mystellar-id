@@ -5,19 +5,31 @@ import BgCard from '../../assets/image/elips.png';
 import BgImage from '../../assets/image/bg-register-new.png';
 
 const StepRegisterWrapper = styled.div`
-  margin-top: 50px;
   width: 100%;
-  background-image: url(${BgImage});
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background-color: ${themeGet('colors.white', '#ffffff')};
   position: relative;
   overflow: hidden;
+
+  .image {
+    margin-top: 30px;
+
+    .streach {
+      width: 100%;
+      height: 100%;
+    }
+  }
 
   .card {
     width: 90%;
     height: 220px;
-    margin-top: 250px;
     margin-left: 5%;
+  }
+
+  .form {
+    width: 100%;
+    margin-left: 5%;
+    margin-right: 5%;
+    display: inline-block;
   }
 
   .col {
