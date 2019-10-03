@@ -8,9 +8,6 @@ import Button from '../../elements/Button';
 import { Alert, Form } from 'antd';
 import Text from '../../elements/Text';
 import Heading from '../../elements/Heading';
-import ImageRegister from '../../assets/image/bg-register-new.png';
-
-const { insertDomain } = FirebaseHelper;
 
 const StepRegister = ({
   titleStyle,
@@ -19,7 +16,7 @@ const StepRegister = ({
   user,
   nextStep,
 }) => {
-  const { login, insertDomain, checkDomain } = FirebaseHelper;
+  const { insertDomain } = FirebaseHelper;
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [input, setInput] = useState({
     isLoading: false,
@@ -77,50 +74,25 @@ const StepRegister = ({
           label="Domain"
         />
       </Box>
-      <Box className="form">
-        <Form layout="inline">
-          <Form.Item>
-            <Button
-              className="default"
-              title="Add"
-              onClick={handleSubmit}
-              isLoading={input.isLoading}
-              disabled={input.isLoading}
-              {...btnStyle}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              className="default"
-              title="Next"
-              onClick={nextStep}
-              isLoading={input.isLoading}
-              disabled={input.isLoading}
-              {...btnStyle}
-            />
-          </Form.Item>
-        </Form>
-        {/*<AlertMessage />*/}
-        {/*<Box>*/}
-        {/*  <Button*/}
-        {/*    className="default"*/}
-        {/*    title="Add"*/}
-        {/*    onClick={handleSubmit}*/}
-        {/*    isLoading={input.isLoading}*/}
-        {/*    disabled={input.isLoading}*/}
-        {/*    {...btnStyle}*/}
-        {/*  />*/}
-        {/*</Box>*/}
-        {/*<Box>*/}
-        {/*  <Button*/}
-        {/*    className="default"*/}
-        {/*    title="Next"*/}
-        {/*    onClick={nextStep}*/}
-        {/*    isLoading={input.isLoading}*/}
-        {/*    disabled={input.isLoading}*/}
-        {/*    {...btnStyle}*/}
-        {/*  />*/}
-        {/*</Box>*/}
+      <AlertMessage />
+      <Box>
+        <Button
+          className="default"
+          title="Add"
+          onClick={handleSubmit}
+          isLoading={input.isLoading}
+          disabled={input.isLoading}
+          {...btnStyle}
+        />
+        <Button
+          className="withoutBg"
+          variant="textButton"
+          title="Next >"
+          onClick={nextStep}
+          isLoading={input.isLoading}
+          disabled={input.isLoading}
+          {...btnStyle}
+        />
       </Box>
     </StepRegisterWrapper>
   );

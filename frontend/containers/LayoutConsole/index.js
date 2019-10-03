@@ -43,6 +43,7 @@ const LayoutConsole = ({ windowSize, children, user }) => {
             <Topbar
               collapsed={state.collapsed}
               toggleCollapsed={toggleCollapsed}
+              user={user}
             />
 
             <Layout style={{ flexDirection: 'row', overflowX: 'hidden' }}>

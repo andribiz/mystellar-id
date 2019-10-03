@@ -47,34 +47,6 @@ const StepRegisterWrapper = styled.div`
       }
     }
   }
-  .reusecore__button {
-    background-color: transparent;
-    &.default {
-      background-color: rgb(26, 115, 232);
-      transition: all 0.3s ease;
-    }
-  }
-
-  .google-login__btn {
-    width: 100%;
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 45px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    .btn-icon {
-      position: relative;
-      left: -22px;
-      img {
-        width: 21px;
-        height: auto;
-      }
-    }
-    &:hover {
-      background: transparent;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-  }
-
   .reusecore__input {
     margin-bottom: 30px;
     &.is-material {
@@ -93,15 +65,6 @@ const StepRegisterWrapper = styled.div`
       font-size: 14px;
       color: rgba(0, 0, 0, 0.6);
       top: 15px;
-    }
-  }
-  .reusecore__checkbox {
-    margin: 0 0 35px;
-    label {
-      .reusecore__field-label {
-        font-size: 13px;
-        font-weight: 400;
-      }
     }
   }
 `;

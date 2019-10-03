@@ -22,16 +22,6 @@ const LoginWrapper = styled.div`
       }
     }
   }
-  .reusecore__button {
-    background-color: transparent;
-    &.default {
-      background-color: rgb(26, 115, 232);
-      transition: all 0.3s ease;
-      &:hover {
-        box-shadow: 0px 9px 20px -5px rgba(26, 115, 232, 0.57);
-      }
-    }
-  }
 
   .rc-tabs {
     border: 0;

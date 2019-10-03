@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-
 import FormAddress from '../../containers/FormAddress';
 import Box from '../../elements/Box';
 import PropTypes from 'prop-types';
-import Container from '../../components/UI/Container';
 import APISection from '../../containers/APISection';
 import ListMystellar from '../../containers/ListMyStellar';
+import { AppWrapper } from '../../containers/app.style';
 
 const Index = ({ row, col, list, user }) => {
   const [record, setRecord] = useState({
@@ -32,7 +31,7 @@ const Index = ({ row, col, list, user }) => {
           rel="stylesheet"
         />
       </Head>
-      <Container noGutter={true}>
+      <AppWrapper>
         <Box {...row}>
           <Box {...col}>
             <FormAddress
@@ -52,7 +51,7 @@ const Index = ({ row, col, list, user }) => {
             <APISection />
           </Box>
         </Box>
-      </Container>
+      </AppWrapper>
     </>
   );
 };

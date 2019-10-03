@@ -1,9 +1,9 @@
 import React from 'react';
 import Head from 'next/head';
-import Container from '../../components/UI/Container';
 import Box from '../../elements/Box';
 import PropTypes from 'prop-types';
 import ListUsers from '../../containers/ListUsers';
+import { AppWrapper } from '../../containers/app.style';
 
 const Federation = ({ row, col, list }) => {
   // const size = process.browser && useWindowSize();
@@ -21,13 +21,13 @@ const Federation = ({ row, col, list }) => {
           rel="stylesheet"
         />
       </Head>
-      <Container>
+      <AppWrapper>
         <Box {...row}>
           <Box {...col}>
             <ListUsers />
           </Box>
         </Box>
-      </Container>
+      </AppWrapper>
     </>
   );
 };

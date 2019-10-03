@@ -4,7 +4,7 @@ import TopbarNotification from './topbarNotification';
 import TopbarUser from './topbarUser';
 import TopbarWrapper from './topbar.style';
 
-const Topbar = ({ toggleCollapsed, collapsed }) => {
+const Topbar = ({ toggleCollapsed, collapsed, user }) => {
   // const [state, setState] = useState({selectedItem:""})
 
   const isCollapsed = collapsed;
@@ -35,17 +35,10 @@ const Topbar = ({ toggleCollapsed, collapsed }) => {
 
         <ul className="isoRight">
           <li
-            // onClick={() => setState({selectedItem: "notification"})}
-            className="isoNotify"
-          >
-            <TopbarNotification />
-          </li>
-
-          <li
             // onClick={() => setState({selectedItem: "user"})}
             className="isoUser"
           >
-            <TopbarUser />
+            <TopbarUser user={user} />
           </li>
         </ul>
       </Header>
