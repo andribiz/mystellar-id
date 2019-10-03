@@ -64,7 +64,7 @@ const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
         />
       </Box>
 
-      <Box className="button">
+      <Box className="form">
         <AlertMessage />
         <Form layout="inline">
           <Form.Item>
