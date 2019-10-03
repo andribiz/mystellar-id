@@ -17,7 +17,7 @@ import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
 import Router from 'next/router';
-const { login, register, isAuthenticated } = FirebaseHelper;
+const { login, register, isAuthenticated, dbUser } = FirebaseHelper;
 
 const Login = ({
   row,
@@ -42,11 +42,26 @@ const Login = ({
     loginMessage: '',
   });
 
-  const handleLogin = method => {
+  const handleLogin = async method => {
     setStateNotify({ isLoading: true, loginMessage: '' });
-    login(method, state.email, state.password)
+    await login(method, state.email, state.password)
       .then(res => {
-        setStateNotify({ isLoading: false, loginMessage: '' });
+        if (res.additionalUserInfo.isNewUser) {
+          dbUser()
+            .doc(res.user.uid)
+            .set({
+              email: res.user.email,
+              name: res.user.displayName,
+              profile_pic: res.user.photoURL,
+            })
+            .then(() => {
+              console.log('Document successfully written!');
+              setStateNotify({ isLoading: false, loginMessage: '' });
+            })
+            .catch(e => {
+              setStateNotify({ isLoading: false, loginMessage: e.message });
+            });
+        }
       })
       .catch(error => {
         setStateNotify({ isLoading: false, loginMessage: error.message });
@@ -61,6 +76,20 @@ const Login = ({
         if (res.errCode)
           setStateNotify({ isLoading: false, errMessage: res.message });
         else {
+          dbUser()
+            .doc(res.user.uid)
+            .set({
+              email: stateReg.email,
+              name: stateReg.name,
+            })
+            .then(() => {
+              console.log('Document successfully written!');
+              setStateNotify({ isLoading: false, loginMessage: '' });
+            })
+            .catch(e => {
+              setStateNotify({ isLoading: false, loginMessage: e.message });
+            });
+
           setStateNotify({ isLoading: false, errMessage: '' });
         }
       })

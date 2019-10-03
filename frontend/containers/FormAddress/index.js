@@ -173,7 +173,7 @@ const FormAddress = ({
         />
         {state.mode === 'edit' ? (
           <Text
-            content={input.address + '*MyStellar.id'}
+            content={input.address + '*mystellar.id'}
             {...descriptionStyle}
           ></Text>
         ) : (
@@ -184,7 +184,7 @@ const FormAddress = ({
               setInput({ ...input, address: res });
             }}
             isMaterial
-            label="MyStellar.id Address"
+            label="myStellar.id Address"
           />
         )}
 

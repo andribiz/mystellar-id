@@ -5,22 +5,11 @@ import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
 import ListMystellarWrapper from './ListDomain.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Divider, Table } from 'antd';
+import { Alert, Table, Popconfirm, notification, Divider } from 'antd';
 import 'antd/es/alert/style/css';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
+const { deleteDomain, onSnapshotDomain } = FirebaseHelper;
 const { Column, ColumnGroup } = Table;
-
-const data = [
-  {
-    key: '1',
-    domain: 'mystellar.id',
-  },
-  {
-    key: '2',
-    domain: 'bizoft.id',
-  },
-];
 
 const ListDomain = ({
   btnStyle,
@@ -29,9 +18,10 @@ const ListDomain = ({
   descriptionStyle,
   hintTextStyle,
   googleButtonStyle,
+  user,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
-  const [user, setUser] = useState(null);
+  const [data, setData] = useState([]);
   const [input, setInput] = useState({
     isLoading: false,
     address: '',
@@ -39,17 +29,44 @@ const ListDomain = ({
     memo: '',
   });
 
-  const handleSigning = () => {
-    login('google').then(result => {
-      setUser(result.user);
+  const openNotification = (type, message) => {
+    notification[type]({
+      message: message,
     });
   };
 
-  useEffect(() => {
-    isAuthenticated(user => {
-      setUser(user);
+  const removeDomain = async (user, record) => {
+    const result = await deleteDomain(user, record);
+    if (result.errMsg === '') {
+      setData(data => data.filter(row => row.id != record.id));
+      openNotification('success', 'Data Has Been Delete');
+    } else {
+      openNotification('error', result.errMsg);
+    }
+  };
+
+  function toJson(doc) {
+    return {
+      id: doc.id,
+      domain: doc.data().domain,
+    };
+  }
+
+  const onSnapshot = snapshot => {
+    let newData = [];
+    snapshot.docChanges().forEach(change => {
+      newData.push(toJson(change.doc));
     });
-  });
+    setData(newData);
+  };
+
+  useEffect(() => {
+    const snap = onSnapshotDomain(user, onSnapshot);
+
+    return () => {
+      snap();
+    };
+  }, [input]);
 
   const handleSubmit = () => {};
 
@@ -66,14 +83,6 @@ const ListDomain = ({
     </Fragment>
   );
 
-  const AlertMessage = () => {
-    if (msg.errCode === 0)
-      return <Alert message={msg.message} type="success" showIcon />;
-    else if (msg.errCode === 1)
-      return <Alert message={msg.message} type="error" showIcon />;
-    return null;
-  };
-
   return (
     <ListMystellarWrapper>
       <Box {...contentWrapper}>
@@ -86,7 +95,13 @@ const ListDomain = ({
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Delete</a>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="Sure to Delete?"
+                  onConfirm={() => removeDomain(user, record)}
+                >
+                  <a>Delete</a>
+                </Popconfirm>
               </span>
             )}
           />
