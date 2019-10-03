@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { themeGet } from 'styled-system';
+import BgImage from '../../assets/image/bg-register.png';
 
 const StepsDomainWrapper = styled.div`
   width: 90%;
@@ -8,6 +9,7 @@ const StepsDomainWrapper = styled.div`
   overflow: hidden;
   background-color: ${themeGet('colors.white', '#ffffff')};
   box-shadow: 0px 9px 20px -5px rgba(26, 115, 232, 0.57);
+  padding: 30px;
 
   .col {
     position: relative;
@@ -80,6 +82,20 @@ const StepsDomainWrapper = styled.div`
         font-weight: 400;
       }
     }
+  }
+
+  .steps-content {
+    margin-top: 16px;
+    border: 1px dashed #e9e9e9;
+    border-radius: 6px;
+    background-color: #fafafa;
+    min-height: 200px;
+    text-align: center;
+    padding-top: 80px;
+  }
+
+  .steps-action {
+    margin-top: 24px;
   }
 `;
 

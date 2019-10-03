@@ -1,19 +1,14 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
-import Text from '../../elements/Text';
 import Heading from '../../elements/Heading';
-import Input from '../../elements/Input';
-import Button from '../../elements/Button';
-import Image from '../../elements/Image';
 import StepsDomainWrapper from './formAddress.style';
-import GoogleLogo from '../../assets/image/google-icon.jpg';
-import FirebaseHelper from '../../helper/firebase';
-import { Alert, Steps } from 'antd';
 import 'antd/es/alert/style/css';
-import StellarBase from 'stellar-sdk';
+import StepRegister from './StepRegister';
+import StepSetting from './StepSettings';
+import { Button, Steps } from 'antd';
+import StepFinish from './StepFinish';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
 const { Step } = Steps;
 
 const StepsDomain = ({
@@ -23,54 +18,39 @@ const StepsDomain = ({
   descriptionStyle,
   hintTextStyle,
 }) => {
-  const [msg, setMessage] = useState({ errCode: -1, message: '' });
-  const [user, setUser] = useState(null);
-  const [input, setInput] = useState({
-    isLoading: false,
-    address: '',
-    stellar_addr: '',
-    memo: '',
-  });
+  const [state, setState] = useState({ current: 0 });
 
-  useEffect(() => {});
+  const next = () => {
+    setState({ current: state.current + 1 });
+  };
+  const prev = () => {
+    setState({ current: state.current - 1 });
+  };
 
-  const handleSubmit = () => {};
-
-  const LoginButtonGroup = ({ isLoggedIn }) => (
-    <Fragment>
-      <Button
-        className="default"
-        title="Next"
-        onClick={handleSubmit}
-        isLoading={input.isLoading}
-        disabled={input.isLoading}
-        {...btnStyle}
-      />
-    </Fragment>
-  );
-
+  const windowSteps = [<StepRegister />, <StepSetting />, <StepFinish />];
   return (
     <StepsDomainWrapper>
       <Box {...contentWrapper}>
-        <Heading content="Make your own domain" {...titleStyle} />
+        <Heading content={'Use Domain'} {...titleStyle} />
 
-        <Steps type="navigation" current={0}>
+        <Steps type="navigation" current={state.current}>
           <Step key={'1'} title={'Register'} />
           <Step key={'2'} title={'Settings'} />
           <Step key={'3'} title={'Finish'} />
         </Steps>
+        <Box>{windowSteps[state.current]}</Box>
         <Box>
-          <h1>Halo 1</h1>
+          {state.current < 2 && (
+            <Button type="primary" onClick={next}>
+              Next
+            </Button>
+          )}
         </Box>
-        <div>
-          <LoginButtonGroup isLoggedIn={!!user} />
-        </div>
       </Box>
     </StepsDomainWrapper>
   );
 };
-
-// Login style props
+//
 StepsDomain.propTypes = {
   btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
@@ -79,8 +59,8 @@ StepsDomain.propTypes = {
   descriptionStyle: PropTypes.object,
   googleButtonStyle: PropTypes.object,
 };
-
-// Login default style
+//
+// // Login default style
 StepsDomain.defaultProps = {
   // Title default style
   titleStyle: {
@@ -88,7 +68,7 @@ StepsDomain.defaultProps = {
     fontWeight: '400',
     color: '#20201D',
     letterSpacing: '-0.025em',
-    mt: '35px',
+    mt: '10px',
     mb: '10px',
   },
   // Description default style
