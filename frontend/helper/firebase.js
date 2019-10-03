@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { firebaseConfig } from './firebase.config';
+import isValidDomain from 'is-valid-domain';
 
 const valid =
   firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId;
@@ -26,7 +27,6 @@ class FirebaseHelper {
     this.onSnapshotDomain = this.onSnapshotDomain.bind(this);
     this.onSnapshotFed = this.onSnapshotFed.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
-    this.checkDomain = this.checkDomain.bind(this);
     this.logout = this.logout.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
@@ -106,24 +106,37 @@ class FirebaseHelper {
     }
   };
 
-  async checkDomain(user, domain) {
-    const check = domain.match(
-      /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g
-    );
-    if (!check) {
-      return { errMsg: 'Domain not match' };
+  async isValidDomain(user, url) {
+    const domain = url.replace('https://', '').replace('http://', '');
+    if (!isValidDomain(domain, { subdomain: false, wildcard: false })) {
+      return { errMsg: 'Domain name is not valid domain' };
     }
 
-    return await this.database
+    const query = await this.database
       .collection('user')
       .doc(user.uid)
       .collection('domains')
       .where('domain', '==', domain)
       .get();
+
+    let res = { errMsg: '' };
+    query.forEach(doc => {
+      if (!!doc.data()) {
+        res = { errMsg: 'Domain is already exists' };
+      }
+    });
+
+    return res;
   }
 
   async insertDomain(user, domain) {
     try {
+      const res = this.isValidDomain(user, domain);
+
+      if (res.errMsg !== '') {
+        return res;
+      }
+
       await this.database
         .collection('user')
         .doc(user.uid)

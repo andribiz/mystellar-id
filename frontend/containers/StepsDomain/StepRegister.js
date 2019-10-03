@@ -18,6 +18,7 @@ const StepRegister = ({
   user,
   nextStep,
 }) => {
+  const { login, insertDomain, checkDomain } = FirebaseHelper;
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [input, setInput] = useState({
     isLoading: false,
@@ -33,8 +34,10 @@ const StepRegister = ({
   };
 
   const handleSubmit = async ev => {
+    let check = true;
     ev.preventDefault();
     setInput({ ...input, isLoading: true });
+
     const res = await insertDomain(user, input.domain);
     if (res.errMsg === '') {
       setMessage({
