@@ -11,8 +11,10 @@ const StepRegister = ({ contentWrapper }) => {
   return (
     <StepRegisterWrapper>
       <div className="card">
+        {/*<Box {...contentWrapper}>*/}
         <Input inputType="text" isMaterial label="Enter your domain name" />
       </div>
+      {/*</Box>*/}
     </StepRegisterWrapper>
   );
 };
