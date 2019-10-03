@@ -13,7 +13,7 @@ import { Alert, Steps } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
-const { login, insertDomain, isAuthenticated } = FirebaseHelper;
+const { login, insertDomain, isAuthenticated, checkDomain } = FirebaseHelper;
 const { Step } = Steps;
 
 const StepsDomain = ({
@@ -45,20 +45,40 @@ const StepsDomain = ({
   };
 
   const handleSubmit = async ev => {
+    let check = true;
     ev.preventDefault();
     setInput({ ...input, isLoading: true });
-    const res = await insertDomain(user, input.domain);
-    if (res.errMsg === '') {
-      setMessage({
-        errCode: 0,
-        message: 'Federation successfully listed',
-      });
-      setInput({ ...input, isLoading: false });
-    }
-    //Mode Edit
-    else {
-      setInput({ ...input, isLoading: false });
-      setMessage({ errCode: 1, message: res.errMsg });
+
+    await checkDomain(user, input.domain).then(QsnapShot => {
+      if (!!QsnapShot.errMsg) {
+        check = false;
+        setInput({ ...input, isLoading: false });
+        setMessage({ errCode: 1, message: QsnapShot.errMsg });
+      } else {
+        QsnapShot.forEach(docs => {
+          if (!!docs.data()) {
+            check = false;
+            setInput({ ...input, isLoading: false });
+            setMessage({ errCode: 1, message: 'Domain is Exist' });
+          }
+        });
+      }
+    });
+
+    if (check == true) {
+      const res = await insertDomain(user, input.domain);
+      if (res.errMsg === '') {
+        setMessage({
+          errCode: 0,
+          message: 'Federation successfully listed',
+        });
+        setInput({ ...input, isLoading: false });
+      }
+      //Mode Edit
+      else {
+        setInput({ ...input, isLoading: false });
+        setMessage({ errCode: 1, message: res.errMsg });
+      }
     }
   };
 
@@ -85,6 +105,7 @@ const StepsDomain = ({
           <Step key={'2'} title={'Settings'} />
           <Step key={'3'} title={'Finish'} />
         </Steps>
+        <br />
         <Box>
           <Input
             inputType="text"

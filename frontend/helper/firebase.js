@@ -26,6 +26,7 @@ class FirebaseHelper {
     this.onSnapshotDomain = this.onSnapshotDomain.bind(this);
     this.onSnapshotFed = this.onSnapshotFed.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.checkDomain = this.checkDomain.bind(this);
     this.logout = this.logout.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
@@ -104,6 +105,22 @@ class FirebaseHelper {
       return { errMsg: err.message };
     }
   };
+
+  async checkDomain(user, domain) {
+    const check = domain.match(
+      /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g
+    );
+    if (!check) {
+      return { errMsg: 'Domain not match' };
+    }
+
+    return await this.database
+      .collection('user')
+      .doc(user.uid)
+      .collection('domains')
+      .where('domain', '==', domain)
+      .get();
+  }
 
   async insertDomain(user, domain) {
     try {
