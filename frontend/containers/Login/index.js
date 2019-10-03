@@ -104,6 +104,7 @@ const Login = ({
       />
       <Button
         title="Forget Password"
+        className={'withoutBg'}
         variant="textButton"
         {...outlineBtnStyle}
       />

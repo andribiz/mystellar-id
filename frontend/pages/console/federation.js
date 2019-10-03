@@ -1,10 +1,10 @@
 import React from 'react';
 import Head from 'next/head';
-import Container from '../../components/UI/Container';
 import Box from '../../elements/Box';
 import PropTypes from 'prop-types';
 import StepsDomain from '../../containers/StepsDomain';
 import ListDomain from '../../containers/ListDomain';
+import { AppWrapper } from '../../containers/app.style';
 
 const Federation = ({ row, col, list, user }) => {
   // const size = process.browser && useWindowSize();
@@ -22,7 +22,7 @@ const Federation = ({ row, col, list, user }) => {
           rel="stylesheet"
         />
       </Head>
-      <Container>
+      <AppWrapper>
         <Box {...row}>
           <Box {...col}>
             <StepsDomain user={user} />
@@ -31,7 +31,7 @@ const Federation = ({ row, col, list, user }) => {
             <ListDomain user={user} />
           </Box>
         </Box>
-      </Container>
+      </AppWrapper>
     </>
   );
 };

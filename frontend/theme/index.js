@@ -100,6 +100,10 @@ export const appTheme = {
       padding: 0,
       height: 'auto',
       backgroundColor: colors.transparent,
+      '&:hover': {
+        backgroundColor: colors.transparent,
+        borderColor: colors.secondary,
+      },
     },
     outlined: {
       borderWidth: '1px',

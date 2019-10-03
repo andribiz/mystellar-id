@@ -78,8 +78,9 @@ const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
           </Form.Item>
           <Form.Item>
             <Button
-              className="default"
-              title="Next"
+              className="withoutBg"
+              variant="textButton"
+              title="Next >"
               onClick={nextStep}
               isLoading={state.isLoading}
               disabled={state.isLoading}

@@ -136,6 +136,7 @@ const FormAddress = ({
       {state.mode === 'edit' && (
         <Button
           title="cancel "
+          className={'withoutBg'}
           variant="textButton"
           onClick={clearData}
           style={{ fontSize: '14px' }}

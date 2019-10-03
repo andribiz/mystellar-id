@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 const { logout } = FirebaseHelper;
 
-const TopbarUser = () => {
+const TopbarUser = ({ user }) => {
   const [state, setState] = useState({ visible: false });
   const router = useRouter();
   const handleVisibleChange = () => {
@@ -39,7 +39,11 @@ const TopbarUser = () => {
       placement="bottomLeft"
     >
       <div className="isoImgWrapper">
-        <img alt="user" src={userpic} />
+        {user.photoURL ? (
+          <img alt="user" src={user.photoURL} />
+        ) : (
+          <img alt="user" src={userpic} />
+        )}
         <span className="userActivity online" />
       </div>
     </Popover>

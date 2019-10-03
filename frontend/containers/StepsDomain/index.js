@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
-import StepsDomainWrapper from './formAddress.style';
+import StepsDomainWrapper from './StepsDomain.style';
 import { Steps } from 'antd';
 import 'antd/es/alert/style/css';
 import StepRegister from './StepRegister';

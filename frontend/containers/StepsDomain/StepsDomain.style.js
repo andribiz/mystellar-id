@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { themeGet } from 'styled-system';
-import BgImage from '../../assets/image/bg-register.png';
 
 const StepsDomainWrapper = styled.div`
   width: 90%;
@@ -24,33 +23,6 @@ const StepsDomainWrapper = styled.div`
       &.imageCol {
         display: none;
       }
-    }
-  }
-  .reusecore__button {
-    background-color: transparent;
-    &.default {
-      background-color: rgb(26, 115, 232);
-      transition: all 0.3s ease;
-    }
-  }
-
-  .google-login__btn {
-    width: 100%;
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 45px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    .btn-icon {
-      position: relative;
-      left: -22px;
-      img {
-        width: 21px;
-        height: auto;
-      }
-    }
-    &:hover {
-      background: transparent;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
   }
 

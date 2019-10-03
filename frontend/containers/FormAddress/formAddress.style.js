@@ -24,13 +24,6 @@ const FormAddressWrapper = styled.div`
       }
     }
   }
-  .reusecore__button {
-    background-color: transparent;
-    &.default {
-      background-color: rgb(26, 115, 232);
-      transition: all 0.3s ease;
-    }
-  }
 
   .google-login__btn {
     width: 100%;
@@ -70,15 +63,6 @@ const FormAddressWrapper = styled.div`
       font-size: 14px;
       color: rgba(0, 0, 0, 0.6);
       top: 15px;
-    }
-  }
-  .reusecore__checkbox {
-    margin: 0 0 35px;
-    label {
-      .reusecore__field-label {
-        font-size: 13px;
-        font-weight: 400;
-      }
     }
   }
 `;
