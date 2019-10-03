@@ -7,9 +7,9 @@ import ListMystellarWrapper from './ListUsersWrapper.style';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert, Divider, Table } from 'antd';
 import 'antd/es/alert/style/css';
+import Select from '../../elements/Select';
 
-const { login, insertAddress, isAuthenticated } = FirebaseHelper;
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 
 const data = [
   {
@@ -35,9 +35,9 @@ const ListUsers = ({
   descriptionStyle,
   hintTextStyle,
   googleButtonStyle,
+  user,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
-  const [user, setUser] = useState(null);
   const [input, setInput] = useState({
     isLoading: false,
     address: '',
@@ -50,12 +50,6 @@ const ListUsers = ({
       setUser(result.user);
     });
   };
-
-  useEffect(() => {
-    isAuthenticated(user => {
-      setUser(user);
-    });
-  });
 
   const handleSubmit = () => {};
 
@@ -80,10 +74,26 @@ const ListUsers = ({
     return null;
   };
 
+  const options = [
+    { value: '1', label: 'domain.com' },
+    { value: '2', label: 'kasus.com' },
+  ];
+
   return (
     <ListMystellarWrapper>
       <Box {...contentWrapper}>
-        <Heading content="Your Addresses" {...titleStyle} />
+        <Box>
+          <Heading content="Your Addresses" {...titleStyle} />
+          <Button
+            className="default"
+            title="Add"
+            onClick={handleSubmit}
+            isLoading={input.isLoading}
+            disabled={input.isLoading}
+            {...btnStyle}
+          />
+          <Select labelText={'Domain'} options={options} />
+        </Box>
 
         <Table dataSource={data}>
           <Column title="Federation" dataIndex="federation" key="federation" />

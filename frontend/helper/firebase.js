@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { firebaseConfig } from './firebase.config';
+import isValidDomain from 'is-valid-domain';
 
 const valid =
   firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId;
@@ -105,8 +106,37 @@ class FirebaseHelper {
     }
   };
 
+  async isValidDomain(user, url) {
+    const domain = url.replace('https://', '').replace('http://', '');
+    if (!isValidDomain(domain, { subdomain: false, wildcard: false })) {
+      return { errMsg: 'Domain name is not valid domain' };
+    }
+
+    const query = await this.database
+      .collection('user')
+      .doc(user.uid)
+      .collection('domains')
+      .where('domain', '==', domain)
+      .get();
+
+    let res = { errMsg: '' };
+    query.forEach(doc => {
+      if (!!doc.data()) {
+        res = { errMsg: 'Domain is already exists' };
+      }
+    });
+
+    return res;
+  }
+
   async insertDomain(user, domain) {
     try {
+      const res = this.isValidDomain(user, domain);
+
+      if (res.errMsg !== '') {
+        return res;
+      }
+
       await this.database
         .collection('user')
         .doc(user.uid)
