@@ -22,11 +22,12 @@ class FirebaseHelper {
     this.insertAddress = this.insertAddress.bind(this);
     this.updateAddress = this.updateAddress.bind(this);
     this.insertDomain = this.insertDomain.bind(this);
+    this.insertUser = this.insertUser.bind(this);
     this.onSnapshotDomain = this.onSnapshotDomain.bind(this);
+    this.onSnapshotFed = this.onSnapshotFed.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
-    this.getListDomain = this.getListDomain.bind(this);
     this.logout = this.logout.bind(this);
-    this.dbfed = this.dbfed.bind(this);
+    this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
     this.auth = firebase.auth();
 
@@ -50,44 +51,20 @@ class FirebaseHelper {
     }
   }
 
-  async register(email, password) {
-    const res = await this.auth
-      .createUserWithEmailAndPassword(email, password)
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(`${error.code} ${error.message}`);
-        return { errCode: error.code, message: error.message };
+  async insertUser(uid, email, name, photoUrl) {
+    return await this.database
+      .collection('user')
+      .doc(uid)
+      .set({
+        email: email,
+        name: name,
+        photoUrl: photoUrl,
       });
-    return res;
   }
 
-  async getListDomain(user) {
-    try {
-      const result = await this.database
-        .collection('user')
-        .doc(user)
-        .collection('domains')
-        .get();
-      return { errMsg: '', data: result };
-    } catch (err) {
-      return { errMsg: err.message };
-    }
+  async register(email, password) {
+    return await this.auth.createUserWithEmailAndPassword(email, password);
   }
-
-  // getListDomain(user) {
-  //   try {
-  //     dbUser()
-  //       .doc(user)
-  //       .collection('domains')
-  //       .get()
-  //         .then();
-  //     return {errMsg:"", data:result}
-  //   } catch (err) {
-  //     return { errMsg: err.message };
-  //   }
-  // }
 
   async updateAddress(input) {
     const domain = '*mystellar.id';
@@ -101,6 +78,18 @@ class FirebaseHelper {
       return { errMsg: err.message };
     }
   }
+
+  deleteFed = async record => {
+    try {
+      const result = await this.database
+        .collection('federation')
+        .doc(record)
+        .delete();
+      return { errMsg: '' };
+    } catch (err) {
+      return { errMsg: err.message };
+    }
+  };
 
   deleteDomain = async (user, record) => {
     try {
@@ -129,6 +118,15 @@ class FirebaseHelper {
     } catch (err) {
       return { errMsg: err.message };
     }
+  }
+
+  onSnapshotFed(user, callMe) {
+    return this.database
+      .collection('federation')
+      .where('email', '==', user.email)
+      .onSnapshot(snapshot => {
+        callMe(snapshot);
+      });
   }
 
   onSnapshotDomain(user, callMe) {
@@ -166,10 +164,6 @@ class FirebaseHelper {
 
   logout() {
     return this.auth.signOut();
-  }
-
-  dbfed() {
-    return this.database.collection('federation');
   }
 
   dbUser() {
