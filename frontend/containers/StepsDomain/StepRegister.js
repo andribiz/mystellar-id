@@ -2,17 +2,16 @@ import React from 'react';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
 import StepRegisterWrapper from './StepRegister.style';
+// import Input from '../../elements/Input';
+import Input from '../../elements/Input';
+import StellarBase from 'stellar-sdk';
+import FormAddressWrapper from '../FormAddress/formAddress.style';
 
-const StepRegister = () => {
+const StepRegister = ({ contentWrapper }) => {
   return (
     <StepRegisterWrapper>
       <div className="card">
-        {/*<h1>Registration</h1>*/}
-        <form>
-          <h1>Hello</h1>
-          <p>Enter your name:</p>
-          <input type="text" />
-        </form>
+        <Input inputType="text" isMaterial label="Enter your domain name" />
       </div>
     </StepRegisterWrapper>
   );

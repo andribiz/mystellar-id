@@ -7,7 +7,10 @@ const StepSetting = () => {
   return (
     <StepSettingsWrapper>
       <div className="card">
-        <h1>Setting</h1>
+        <div className="center">
+          BLA BLA BLA BLA BLA BLABLA BLA BLABLA BLA BLABLA BLA BLABLA BLA BLABLA
+          BLA BLABLA BLA BLABLA BLA BLA
+        </div>
       </div>
     </StepSettingsWrapper>
   );

@@ -8,7 +8,7 @@ const StepFinish = () => {
     <StepFinishWrapper>
       <div class="card">
         <div class="center">
-          Now, ready to input your users address. Please go to menu “Your Users”
+          Now, ready to input your users address. Please go to menu “Your User”
           or click the button bellow
         </div>
       </div>

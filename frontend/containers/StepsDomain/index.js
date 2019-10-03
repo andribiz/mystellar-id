@@ -6,7 +6,7 @@ import StepsDomainWrapper from './formAddress.style';
 import 'antd/es/alert/style/css';
 import StepRegister from './StepRegister';
 import StepSetting from './StepSettings';
-import { Button, Steps } from 'antd';
+import { Alert, Button, Steps } from 'antd';
 import StepFinish from './StepFinish';
 
 const { Step } = Steps;
@@ -41,8 +41,14 @@ const StepsDomain = ({
         <Box>{windowSteps[state.current]}</Box>
         <Box>
           {state.current < 2 && (
-            <Button type="primary" onClick={next}>
+            <Button type="primary" onClick={next} ghost>
               Next
+            </Button>
+          )}
+
+          {state.current === 2 && (
+            <Button type="primary" ghost>
+              Input User
             </Button>
           )}
         </Box>
