@@ -8,7 +8,7 @@ import { Alert, Table, Divider, Popconfirm, notification } from 'antd';
 import 'antd/es/alert/style/css';
 import FormAddress from '../FormAddress';
 
-const { dbfed } = FirebaseHelper;
+const { deleteFed, onSnapshotFed } = FirebaseHelper;
 const { Column } = Table;
 
 const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
@@ -31,6 +31,16 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
     });
   };
 
+  const removeDomain = async record => {
+    const result = await deleteFed(record);
+    if (result.errMsg === '') {
+      setData(data => data.filter(row => row.address != record));
+      openNotification('success', 'Data Has Been Delete');
+    } else {
+      openNotification('error', result.errMsg);
+    }
+  };
+
   function MapData(item) {
     if (item.address.substr(0, item.address.indexOf('*')) === this.address) {
       item.stellar_addr = this.stellar_addr;
@@ -39,24 +49,20 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
     return item;
   }
 
-  const updateData = async user => {
-    let dt = dbfed().where('email', '==', user.email);
-
-    dt.onSnapshot(function(snapshot) {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === 'added') {
-          setData(data => [...data, toJson(change.doc)]);
-        } else if (change.type === 'modified') {
-          setData(data => data.map(MapData, change.doc.data()));
-        }
-      });
+  const onSnapshot = snapshot => {
+    snapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        setData(data => [...data, toJson(change.doc)]);
+      } else if (change.type === 'modified') {
+        setData(data => data.map(MapData, change.doc.data()));
+      }
     });
   };
 
   useEffect(() => {
-    updateData(user);
+    const snap = onSnapshotFed(user, onSnapshot);
     return () => {
-      dbfed().onSnapshot(function() {});
+      snap();
     };
   }, []);
 
@@ -97,7 +103,7 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
                 <Divider type="vertical" />
                 <Popconfirm
                   title="Sure to Delete?"
-                  onConfirm={() => remove(record.address)}
+                  onConfirm={() => removeDomain(record.address)}
                 >
                   <a>Delete</a>
                 </Popconfirm>

@@ -24,9 +24,6 @@ const ListDomain = ({
   const [data, setData] = useState([]);
   const [input, setInput] = useState({
     isLoading: false,
-    address: '',
-    stellar_addr: '',
-    memo: '',
   });
 
   const openNotification = (type, message) => {
@@ -53,11 +50,11 @@ const ListDomain = ({
   }
 
   const onSnapshot = snapshot => {
-    let newData = [];
     snapshot.docChanges().forEach(change => {
-      newData.push(toJson(change.doc));
+      if (change.type === 'added') {
+        setData(data => [...data, toJson(change.doc)]);
+      }
     });
-    setData(newData);
   };
 
   useEffect(() => {
@@ -66,7 +63,7 @@ const ListDomain = ({
     return () => {
       snap();
     };
-  }, [input]);
+  }, []);
 
   const handleSubmit = () => {};
 
