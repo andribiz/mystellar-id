@@ -7,7 +7,6 @@ import BgImage from '../../assets/image/bg-register-new.png';
 const StepRegisterWrapper = styled.div`
   margin-top: 50px;
   width: 100%;
-  height: 420px;
   background-image: url(${BgImage});
   background-repeat: no-repeat;
   background-size: 100% 100%;

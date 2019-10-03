@@ -171,7 +171,7 @@ const FormAddress = ({
           <Text
             content={input.address + '*mystellar.id'}
             {...descriptionStyle}
-          ></Text>
+          />
         ) : (
           <Input
             inputType="text"

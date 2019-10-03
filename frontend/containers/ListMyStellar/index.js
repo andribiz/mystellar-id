@@ -4,9 +4,8 @@ import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
 import ListMystellarWrapper from './ListMystellar.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Table, Divider, Popconfirm, notification } from 'antd';
+import { Divider, notification, Popconfirm, Table } from 'antd';
 import 'antd/es/alert/style/css';
-import FormAddress from '../FormAddress';
 
 const { deleteFed, onSnapshotFed } = FirebaseHelper;
 const { Column } = Table;
@@ -41,13 +40,13 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
     }
   };
 
-  function MapData(item) {
+  const MapData = item => {
     if (item.address.substr(0, item.address.indexOf('*')) === this.address) {
       item.stellar_addr = this.stellar_addr;
       item.memo = this.memo;
     }
     return item;
-  }
+  };
 
   const onSnapshot = snapshot => {
     snapshot.docChanges().forEach(change => {
@@ -60,9 +59,9 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
   };
 
   useEffect(() => {
-    const snap = onSnapshotFed(user, onSnapshot);
+    const unsubscribe = onSnapshotFed(user, onSnapshot);
     return () => {
-      snap();
+      unsubscribe();
     };
   }, []);
 

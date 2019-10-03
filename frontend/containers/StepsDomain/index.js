@@ -1,33 +1,34 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
+import Button from '../../elements/Button';
 import StepsDomainWrapper from './formAddress.style';
+import { Steps } from 'antd';
 import 'antd/es/alert/style/css';
 import StepRegister from './StepRegister';
 import StepSetting from './StepSettings';
-import { Alert, Button, Steps } from 'antd';
 import StepFinish from './StepFinish';
 
 const { Step } = Steps;
 
-const StepsDomain = ({
-  btnStyle,
-  titleStyle,
-  contentWrapper,
-  descriptionStyle,
-  hintTextStyle,
-}) => {
+const StepsDomain = ({ titleStyle, contentWrapper, user }) => {
   const [state, setState] = useState({ current: 0 });
 
   const next = () => {
+    console.log(state.current);
     setState({ current: state.current + 1 });
   };
   const prev = () => {
     setState({ current: state.current - 1 });
   };
 
-  const windowSteps = [<StepRegister />, <StepSetting />, <StepFinish />];
+  const windowSteps = [
+    <StepRegister user={user} nextStep={next} />,
+    <StepSetting nextStep={next} />,
+    <StepFinish />,
+  ];
+
   return (
     <StepsDomainWrapper>
       <Box {...contentWrapper}>
@@ -39,34 +40,20 @@ const StepsDomain = ({
           <Step key={'3'} title={'Finish'} />
         </Steps>
         <Box>{windowSteps[state.current]}</Box>
-        <Box>
-          {state.current < 2 && (
-            <Button type="primary" onClick={next} ghost>
-              Next
-            </Button>
-          )}
-
-          {state.current === 2 && (
-            <Button type="primary" ghost>
-              Input User
-            </Button>
-          )}
-        </Box>
       </Box>
     </StepsDomainWrapper>
   );
 };
-//
+
+// Login style props
 StepsDomain.propTypes = {
   btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
-  hintTextStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
-  descriptionStyle: PropTypes.object,
-  googleButtonStyle: PropTypes.object,
+  user: PropTypes.object,
 };
-//
-// // Login default style
+
+// Login default style
 StepsDomain.defaultProps = {
   // Title default style
   titleStyle: {
@@ -77,24 +64,7 @@ StepsDomain.defaultProps = {
     mt: '10px',
     mb: '10px',
   },
-  // Description default style
-  descriptionStyle: {
-    color: 'rgba(52, 61, 72, 0.8)',
-    fontSize: '15px',
-    lineHeight: '26px',
-    letterSpacing: '-0.025em',
-    mb: '23px',
-    ml: '1px',
-  },
-  hintTextStyle: {
-    color: 'rgba(52, 61, 72, 0.8)',
-    fontSize: '12px',
-    lineHeight: '20px',
-    letterSpacing: '-0.025em',
-    mb: '10px',
-    mt: '-20px',
-    ml: '1px',
-  },
+
   // Content wrapper style
   contentWrapper: {
     pl: ['17px', '32px', '38px', '40px', '56px'],
@@ -102,16 +72,6 @@ StepsDomain.defaultProps = {
     pb: '32px',
   },
   // Default button style
-  btnStyle: {
-    minWidth: '156px',
-    fontSize: '14px',
-    fontWeight: '500',
-  },
-  // Google button style
-  googleButtonStyle: {
-    bg: '#ffffff',
-    color: '#343D48',
-  },
 };
 
 export default StepsDomain;
