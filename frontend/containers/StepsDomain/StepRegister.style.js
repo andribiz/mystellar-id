@@ -1,15 +1,24 @@
 import styled from 'styled-components';
 import { themeGet } from 'styled-system';
-import BgImage from '../../assets/image/bg-register.png';
+// import BgImage from '../../assets/image/bg-register.png';
+import BgCard from '../../assets/image/elips.png';
+import BgImage from '../../assets/image/bg-register-new.png';
 
-const StepsDomainWrapper = styled.div`
-  width: 90%;
-  margin: 20px auto;
-  border-radius: 5px;
+const StepRegisterWrapper = styled.div`
+  margin-top: 50px;
+  width: 100%;
+  background-image: url(${BgImage});
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative;
   overflow: hidden;
-  background-color: ${themeGet('colors.white', '#ffffff')};
-  box-shadow: 0px 9px 20px -5px rgba(26, 115, 232, 0.57);
-  padding: 30px;
+
+  .card {
+    width: 90%;
+    height: 220px;
+    margin-top: 250px;
+    margin-left: 5%;
+  }
 
   .col {
     position: relative;
@@ -83,20 +92,6 @@ const StepsDomainWrapper = styled.div`
       }
     }
   }
-
-  .steps-content {
-    margin-top: 16px;
-    border: 1px dashed #e9e9e9;
-    border-radius: 6px;
-    background-color: #fafafa;
-    min-height: 200px;
-    text-align: center;
-    padding-top: 80px;
-  }
-
-  .steps-action {
-    margin-top: 24px;
-  }
 `;
 
-export default StepsDomainWrapper;
+export default StepRegisterWrapper;

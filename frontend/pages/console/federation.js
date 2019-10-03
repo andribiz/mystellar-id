@@ -25,7 +25,7 @@ const Federation = ({ row, col, list, user }) => {
       <Container>
         <Box {...row}>
           <Box {...col}>
-            <StepsDomain />
+            <StepsDomain user={user} />
           </Box>
           <Box {...list}>
             <ListDomain user={user} />
