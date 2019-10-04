@@ -5,28 +5,39 @@ import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
 import ListMystellarWrapper from './ListUsersWrapper.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Divider, Table } from 'antd';
+import { Alert, Divider, Table, Select, Form, Modal } from 'antd';
 import 'antd/es/alert/style/css';
-import Select from '../../elements/Select';
+import FormAddress from '../FormAddress';
+import Input from '../../elements/Input';
+import Text from '../../elements/Text';
 
 const { Column } = Table;
+const { onSnapshotFed, onSnapshotDomain, onSearchDomain } = FirebaseHelper;
+const { Option } = Select;
 
-const data = [
-  {
-    key: '1',
-    federation: 'anjing*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
+const modalFormAddress = ({ visible, onCancel, onCreate, form, domain }) => {
+  const [input, setInput] = useState({
+    address: '',
+    stellar_addr: '',
     memo: '',
-    memo_type: '',
-  },
-  {
-    key: '2',
-    federation: 'anjing2*asds.com',
-    stellar_addr: 'GB4J7WIQDHNPMNE246QOD6ICKKMGIGA5RV5VYHBHWZMPFJAVNMTO2UXQ',
-    memo: '',
-    memo_type: '',
-  },
-];
+  });
+
+  return (
+    <Modal
+      visible={visible}
+      title="Create a new collection"
+      okText="Create"
+      onCancel={onCancel}
+      onOk={onCreate}
+    >
+      <FormAddress id="myForm" modal={true} domain={domain} />
+    </Modal>
+  );
+};
+
+const AddressCreateForm = Form.create({ name: 'form_in_modal' })(
+  modalFormAddress
+);
 
 const ListUsers = ({
   btnStyle,
@@ -37,13 +48,12 @@ const ListUsers = ({
   googleButtonStyle,
   user,
 }) => {
+  const [data, setData] = useState([]);
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
-  const [input, setInput] = useState({
-    isLoading: false,
-    address: '',
-    stellar_addr: '',
-    memo: '',
-  });
+  const [options, setOptions] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [input, setInput] = useState({ isLoading: false, value: '' });
+  const [forms, setForm] = useState(null);
 
   const handleSigning = () => {
     login('google').then(result => {
@@ -51,7 +61,69 @@ const ListUsers = ({
     });
   };
 
-  const handleSubmit = () => {};
+  const saveFormRef = formRef => {
+    setForm(formRef);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const handleCreate = () => {
+    const form = formRef.props;
+    // console.log('Received values of form: ', values);
+    //  form.resetFields();
+    //  this.setState({ visible: false });
+  };
+
+  const handleSubmit = () => {
+    setVisible(true);
+  };
+
+  const toJson = doc => {
+    const dt = doc.data();
+    return {
+      address: doc.id,
+      email: dt.email,
+      memo: dt.memo,
+      stellar_addr: dt.stellar_addr,
+      memo_type: dt.memo_type,
+    };
+  };
+
+  const onChangeDomain = async value => {
+    const dt = await onSearchDomain(user, value);
+    setData(dt);
+    setInput({ ...input, value: value });
+  };
+
+  const onSnapshot = snapshot => {
+    snapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        setData(data => [...data, toJson(change.doc)]);
+      }
+    });
+  };
+
+  const onSnapshotDom = snapshot => {
+    snapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        setOptions(options => [
+          ...options,
+          { value: change.doc.id, label: change.doc.data().domain },
+        ]);
+      }
+    });
+  };
+
+  useEffect(() => {
+    const snap = onSnapshotFed(user, onSnapshot);
+    const domain = onSnapshotDomain(user, onSnapshotDom);
+    return () => {
+      snap();
+      domain();
+    };
+  }, []);
 
   const LoginButtonGroup = ({ isLoggedIn }) => (
     <Fragment>
@@ -74,11 +146,6 @@ const ListUsers = ({
     return null;
   };
 
-  const options = [
-    { value: '1', label: 'domain.com' },
-    { value: '2', label: 'kasus.com' },
-  ];
-
   return (
     <ListMystellarWrapper>
       <Box {...contentWrapper}>
@@ -92,11 +159,38 @@ const ListUsers = ({
             disabled={input.isLoading}
             {...btnStyle}
           />
-          <Select labelText={'Domain'} options={options} />
+          <AddressCreateForm
+            ref={saveFormRef}
+            visible={visible}
+            onCancel={handleCancel}
+            onCreate={handleCreate}
+            domain={input.value}
+          />
+          <br />
+          <Select
+            showSearch
+            style={{ width: '100%' }}
+            placeholder="Select a person"
+            optionFilterProp="children"
+            onChange={onChangeDomain}
+            // onFocus={onFocus}
+            // onBlur={onBlur}
+            // onSearch={onSearch}
+            filterOption={(input, option) =>
+              option.props.children
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            <Option value="">---</Option>
+            {options.map(item => (
+              <Option value={item.label}>{item.label}</Option>
+            ))}
+          </Select>
         </Box>
 
         <Table dataSource={data}>
-          <Column title="Federation" dataIndex="federation" key="federation" />
+          <Column title="Federation" dataIndex="address" key="address" />
           <Column
             title="Stellar Addr"
             dataIndex="stellar_addr"

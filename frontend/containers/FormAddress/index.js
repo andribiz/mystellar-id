@@ -27,6 +27,8 @@ const FormAddress = ({
   googleButtonStyle,
   record,
   user,
+  modal,
+  domain,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [state, setState] = useState({ user: user, mode: 'add' });
@@ -194,7 +196,9 @@ const FormAddress = ({
         <Text
           content={
             input.address
-              ? `Your address will be ${input.address}*mystellar.id`
+              ? `Your address will be ` +
+                input.address +
+                (!!domain ? '*' + domain : `*mystellar.id`)
               : ''
           }
           {...hintTextStyle}
@@ -218,9 +222,13 @@ const FormAddress = ({
           label="Memo (Optional)"
         />
         <AlertMessage />
-        <div>
-          <LoginButtonGroup isLoggedIn={!!state.user} />
-        </div>
+        {modal == true ? (
+          <div></div>
+        ) : (
+          <div>
+            <LoginButtonGroup isLoggedIn={!!state.user} />
+          </div>
+        )}
       </Box>
     </FormAddressWrapper>
   );

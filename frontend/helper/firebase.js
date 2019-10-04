@@ -29,6 +29,7 @@ class FirebaseHelper {
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.isValidDomain = this.isValidDomain.bind(this);
     this.logout = this.logout.bind(this);
+    this.onSearchDomain = this.onSearchDomain.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
     this.auth = firebase.auth();
@@ -130,6 +131,38 @@ class FirebaseHelper {
     }
 
     return res;
+  }
+
+  async onSearchDomain(user, value) {
+    let dt = [];
+    const data = await this.database
+      .collection('federation')
+      .where('email', '==', user.email)
+      .get();
+
+    data.forEach(doc => {
+      if (!!value) {
+        if (doc.id.substr(doc.id.indexOf('*') + 1) === value) {
+          dt.push({
+            address: doc.id,
+            email: doc.data().email,
+            memo: doc.data().memo,
+            stellar_addr: doc.data().stellar_addr,
+            memo_type: doc.data().memo_type,
+          });
+        }
+      } else {
+        dt.push({
+          address: doc.id,
+          email: doc.data().email,
+          memo: doc.data().memo,
+          stellar_addr: doc.data().stellar_addr,
+          memo_type: doc.data().memo_type,
+        });
+      }
+    });
+
+    return dt;
   }
 
   async insertDomain(user, domain) {
