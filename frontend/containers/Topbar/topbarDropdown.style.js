@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { transition, borderRadius, boxShadow } from '../../theme/style-util';
 // import WithDirection from '../../config/withDirection';
+import { themeGet } from 'styled-system';
 
 const TopbarDropdownWrapper = styled.div`
   display: flex;
@@ -280,7 +281,8 @@ const TopbarDropdownWrapper = styled.div`
       ${transition()};
 
       &:hover {
-        background-color: ${palette('secondary', 6)};
+        color: rgb(43, 158, 255);
+        background-color: ${themeGet('colors.primaryHover', '#ffffff')};
       }
     }
   }

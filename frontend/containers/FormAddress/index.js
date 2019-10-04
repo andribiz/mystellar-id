@@ -13,7 +13,7 @@ import { Alert } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
-const { login, insertAddress, updateAddress } = FirebaseHelper;
+const { login, isAuthenticated, insertAddress, updateAddress } = FirebaseHelper;
 
 const FormAddress = ({
   title,
@@ -27,6 +27,8 @@ const FormAddress = ({
   googleButtonStyle,
   record,
   user,
+  modal,
+  domain,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [state, setState] = useState({ user: user, mode: 'add' });
@@ -46,7 +48,6 @@ const FormAddress = ({
   const handleSubmit = () => {
     //Verification and validation data
     if (!state.user) {
-      // console.log(a);
       return setMessage({ errCode: 1, message: 'Please sign in first' });
     }
     if (!/^[a-zA-Z0-9\s]{5,}$/.test(input.address)) {
@@ -104,7 +105,14 @@ const FormAddress = ({
   };
 
   useEffect(() => {
-    editData();
+    console.log(state.user);
+
+    if (!state.user) {
+      console.log('masuk');
+      isAuthenticated(user => {
+        user && setState({ ...state, user: user });
+      });
+    } else editData();
   });
 
   const LoginButtonGroup = ({ isLoggedIn }) => (
@@ -188,7 +196,9 @@ const FormAddress = ({
         <Text
           content={
             input.address
-              ? `Your address will be ${input.address}*mystellar.id`
+              ? `Your address will be ` +
+                input.address +
+                (!!domain ? '*' + domain : `*mystellar.id`)
               : ''
           }
           {...hintTextStyle}
@@ -212,9 +222,13 @@ const FormAddress = ({
           label="Memo (Optional)"
         />
         <AlertMessage />
-        <div>
-          <LoginButtonGroup isLoggedIn={!!state.user} />
-        </div>
+        {modal == true ? (
+          <div></div>
+        ) : (
+          <div>
+            <LoginButtonGroup isLoggedIn={!!state.user} />
+          </div>
+        )}
       </Box>
     </FormAddressWrapper>
   );

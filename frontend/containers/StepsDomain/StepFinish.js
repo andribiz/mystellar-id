@@ -8,7 +8,7 @@ import Button from '../../elements/Button';
 import Link from 'next/link';
 import ImageFinish from '../../assets/image/bg-finish-new.png';
 
-const StepFinish = ({ titleStyle, btnStyle, descriptionStyle }) => {
+const StepFinish = ({ titleStyle, btnStyle, descriptionStyle, restart }) => {
   return (
     <StepFinishWrapper>
       <Box className="image">
@@ -27,6 +27,13 @@ const StepFinish = ({ titleStyle, btnStyle, descriptionStyle }) => {
         <Link href={'/console/federation-user'}>
           <Button className="default" title="Create Your User" {...btnStyle} />
         </Link>
+        <Button
+          className="withoutBg"
+          variant="textButton"
+          title="Or Create another domain"
+          onClick={restart}
+          {...btnStyle}
+        />
       </Box>
     </StepFinishWrapper>
   );
@@ -37,6 +44,7 @@ StepFinish.propTypes = {
   btnStyle: PropTypes.object,
   descriptionStyle: PropTypes.object,
   user: PropTypes.object,
+  restart: PropTypes.func,
 };
 
 StepFinish.defaultProps = {

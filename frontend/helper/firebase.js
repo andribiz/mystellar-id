@@ -29,7 +29,9 @@ class FirebaseHelper {
     this.onSnapshotDomain = this.onSnapshotDomain.bind(this);
     this.onSnapshotFed = this.onSnapshotFed.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.isValidDomain = this.isValidDomain.bind(this);
     this.logout = this.logout.bind(this);
+    this.onSearchDomain = this.onSearchDomain.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
     this.auth = firebase.auth();
@@ -126,26 +128,60 @@ class FirebaseHelper {
       return { errMsg: 'Domain name is not valid domain' };
     }
 
-    const query = await this.database
-      .collection('user')
-      .doc(user.uid)
-      .collection('domains')
-      .where('domain', '==', domain)
-      .get();
-
     let res = { errMsg: '' };
-    query.forEach(doc => {
-      if (!!doc.data()) {
-        res = { errMsg: 'Domain is already exists' };
-      }
-    });
+    try {
+      const query = await this.database
+        .collectionGroup('domains')
+        .where('domain', '==', domain)
+        .get();
+
+      query.forEach(doc => {
+        if (!!doc.data()) {
+          res = { errMsg: 'Domain is already exists' };
+        }
+      });
+    } catch (error) {
+      res = { errMsg: `Error : ${error}` };
+    }
 
     return res;
   }
 
+  async onSearchDomain(user, value) {
+    let dt = [];
+    const data = await this.database
+      .collection('federation')
+      .where('email', '==', user.email)
+      .get();
+
+    data.forEach(doc => {
+      if (!!value) {
+        if (doc.id.substr(doc.id.indexOf('*') + 1) === value) {
+          dt.push({
+            address: doc.id,
+            email: doc.data().email,
+            memo: doc.data().memo,
+            stellar_addr: doc.data().stellar_addr,
+            memo_type: doc.data().memo_type,
+          });
+        }
+      } else {
+        dt.push({
+          address: doc.id,
+          email: doc.data().email,
+          memo: doc.data().memo,
+          stellar_addr: doc.data().stellar_addr,
+          memo_type: doc.data().memo_type,
+        });
+      }
+    });
+
+    return dt;
+  }
+
   async insertDomain(user, domain) {
     try {
-      const res = this.isValidDomain(user, domain);
+      const res = await this.isValidDomain(user, domain);
 
       if (res.errMsg !== '') {
         return res;
@@ -208,10 +244,6 @@ class FirebaseHelper {
 
   logout() {
     return this.auth.signOut();
-  }
-
-  dbUser() {
-    return this.database.collection('user');
   }
 
   isAuthenticated(onCompleted) {

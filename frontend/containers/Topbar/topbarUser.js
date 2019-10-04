@@ -20,9 +20,6 @@ const TopbarUser = ({ user }) => {
   };
   const content = (
     <TopbarDropdownWrapper className="isoUserDropdown">
-      <a className="isoDropdownLink">Settings</a>
-      <a className="isoDropdownLink">Feedback</a>
-      <a className="isoDropdownLink">Help</a>
       <a className="isoDropdownLink" onClick={logoutRedirect}>
         Logout
       </a>

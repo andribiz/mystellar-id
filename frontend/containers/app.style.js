@@ -1,5 +1,5 @@
-import styled, {createGlobalStyle} from 'styled-components';
-import {themeGet} from 'styled-system';
+import styled, { createGlobalStyle } from 'styled-components';
+import { themeGet } from 'styled-system';
 
 import Substract from '../assets/image/substract.png';
 import SubstractHover from '../assets/image/substract-hover.png';
@@ -204,6 +204,10 @@ const AppWrapper = styled.div`
     @media only screen and (max-width: 480px) {
       text-align: center;
     }
+  }
+
+  .ant-alert {
+    margin-bottom: 10px;
   }
 
   .reusecore__navbar {

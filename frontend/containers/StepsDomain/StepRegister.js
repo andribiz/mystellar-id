@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { isValidElement, useState } from 'react';
 import StepRegisterWrapper from './StepRegister.style';
 import Input from '../../elements/Input';
 import FirebaseHelper from '../../helper/firebase';
@@ -16,10 +16,11 @@ const StepRegister = ({
   user,
   nextStep,
 }) => {
-  const { insertDomain } = FirebaseHelper;
+  const { isValidDomain } = FirebaseHelper;
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [input, setInput] = useState({
     isLoading: false,
+    step: 0,
     domain: '',
   });
 
@@ -32,20 +33,17 @@ const StepRegister = ({
   };
 
   const handleSubmit = async ev => {
-    let check = true;
     ev.preventDefault();
     setInput({ ...input, isLoading: true });
 
-    const res = await insertDomain(user, input.domain);
+    const res = await isValidDomain(user, input.domain);
     if (res.errMsg === '') {
       setMessage({
         errCode: 0,
-        message: 'Federation successfully listed',
+        message: 'Valid domain',
       });
-      setInput({ ...input, isLoading: false });
-    }
-    //Mode Edit
-    else {
+      setInput({ ...input, step: 1, isLoading: false });
+    } else {
       setInput({ ...input, isLoading: false });
       setMessage({ errCode: 1, message: res.errMsg });
     }
@@ -53,9 +51,6 @@ const StepRegister = ({
 
   return (
     <StepRegisterWrapper>
-      {/*<Box className="image">*/}
-      {/*  <img src={ImageRegister} className="streach"/>*/}
-      {/*</Box>*/}
       <Box className="card">
         <Heading content={'Register your Domain'} {...titleStyle} />
         <Text
@@ -78,21 +73,24 @@ const StepRegister = ({
       <Box>
         <Button
           className="default"
-          title="Add"
+          title="Check"
           onClick={handleSubmit}
           isLoading={input.isLoading}
           disabled={input.isLoading}
           {...btnStyle}
         />
-        <Button
-          className="withoutBg"
-          variant="textButton"
-          title="Next >"
-          onClick={nextStep}
-          isLoading={input.isLoading}
-          disabled={input.isLoading}
-          {...btnStyle}
-        />
+        {input.step === 1 && (
+          <Button
+            className="withoutBg"
+            variant="textButton"
+            title="Next >"
+            onClick={_ => {
+              nextStep(input.domain);
+            }}
+            disabled={input.isLoading}
+            {...btnStyle}
+          />
+        )}
       </Box>
     </StepRegisterWrapper>
   );
@@ -103,6 +101,7 @@ StepRegister.propTypes = {
   btnStyle: PropTypes.object,
   descriptionStyle: PropTypes.object,
   user: PropTypes.object,
+  nextStep: PropTypes.func,
 };
 
 StepRegister.defaultProps = {

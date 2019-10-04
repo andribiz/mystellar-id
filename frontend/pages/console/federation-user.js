@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import ListUsers from '../../containers/ListUsers';
 import { AppWrapper } from '../../containers/app.style';
 
-const Federation = ({ row, col, list }) => {
+const Federation = ({ row, col, list, user }) => {
   // const size = process.browser && useWindowSize();
   return (
     <>
@@ -24,7 +24,7 @@ const Federation = ({ row, col, list }) => {
       <AppWrapper>
         <Box {...row}>
           <Box {...col}>
-            <ListUsers />
+            <ListUsers user={user} />
           </Box>
         </Box>
       </AppWrapper>

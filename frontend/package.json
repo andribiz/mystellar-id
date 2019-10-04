@@ -48,7 +48,8 @@
     "stellar-sdk": "^2.0.0-rc.2",
     "styled-components": "^4.3.2",
     "styled-system": "^4.1.0",
-    "styled-theme": "^0.3.3"
+    "styled-theme": "^0.3.3",
+    "toml": "^3.0.0"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
