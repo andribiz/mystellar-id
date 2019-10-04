@@ -16,8 +16,11 @@ import LoginImage from '../../assets/image/background-login.jpg';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
-import Router from 'next/router';
-const { login, register, insertUser } = FirebaseHelper;
+// import Router from 'next/router';
+// import { useRouter } from 'next/router';
+import Link from 'next/link';
+
+const { login, register, insertUser, forgot } = FirebaseHelper;
 
 const Login = ({
   row,
@@ -102,12 +105,14 @@ const Login = ({
         }}
         {...btnStyle}
       />
-      <Button
-        title="Forget Password"
-        className={'withoutBg'}
-        variant="textButton"
-        {...outlineBtnStyle}
-      />
+      <Link href={'/forgotPassword'}>
+        <Button
+          title="Forget Password"
+          className={'withoutBg'}
+          variant="textButton"
+          {...outlineBtnStyle}
+        />
+      </Link>
     </Fragment>
   );
   const SignupButtonGroup = () => (
