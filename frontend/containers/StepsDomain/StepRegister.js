@@ -101,6 +101,7 @@ StepRegister.propTypes = {
   btnStyle: PropTypes.object,
   descriptionStyle: PropTypes.object,
   user: PropTypes.object,
+  nextStep: PropTypes.func,
 };
 
 StepRegister.defaultProps = {

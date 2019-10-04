@@ -154,6 +154,9 @@ StepSetting.propTypes = {
   btnStyle: PropTypes.object,
   descriptionStyle: PropTypes.object,
   user: PropTypes.object,
+  nextStep: PropTypes.func,
+  prevStep: PropTypes.func,
+  domain: PropTypes.string,
 };
 
 StepSetting.defaultProps = {
