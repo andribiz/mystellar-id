@@ -5,7 +5,16 @@ import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
 import ListMystellarWrapper from './ListUsersWrapper.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Divider, Table, Select, Form, Modal } from 'antd';
+import {
+  Alert,
+  Divider,
+  Table,
+  Select,
+  Form,
+  Modal,
+  Popconfirm,
+  notification,
+} from 'antd';
 import 'antd/es/alert/style/css';
 
 import Input from '../../elements/Input';
@@ -17,10 +26,18 @@ const {
   onSnapshotDomain,
   onSearchDomain,
   insertAddress,
+  deleteFed,
 } = FirebaseHelper;
 const { Option } = Select;
 
-const modalFormAddress = ({ visible, onCancel, onCreate, form, msg }) => {
+const modalFormAddress = ({
+  visible,
+  onCancel,
+  onCreate,
+  form,
+  msg,
+  record,
+}) => {
   const [input, setInput] = useState({
     address: '',
     stellar_addr: '',
@@ -47,23 +64,29 @@ const modalFormAddress = ({ visible, onCancel, onCreate, form, msg }) => {
     >
       <Form layout="vertical">
         <Form.Item label="MyStellar Address">
-          {getFieldDecorator('address', {
-            rules: [{ required: true, message: 'Please input' }],
-            initialValue: '',
-          })(<Input />)}
+          {!!record.address ? (
+            <Text content={record.address} />
+          ) : (
+            getFieldDecorator('address', {
+              rules: [
+                { required: true, message: 'Please input', disable: true },
+              ],
+              initialValue: record.address.substr(record.address.indexOf('*')),
+            })(<Input />)
+          )}
         </Form.Item>
         <Form.Item label="Stellar Address">
           {getFieldDecorator('stellar_addr', {
             rules: [
               { required: true, message: 'Please input Stellar Address' },
             ],
-            initialValue: '',
+            initialValue: record.stellar_addr,
           })(<Input />)}
         </Form.Item>
         <Form.Item label="Memo (Optional)">
           {getFieldDecorator('memo', {
             rules: [{ required: false }],
-            initialValue: '',
+            initialValue: record.memo,
           })(<Input />)}
         </Form.Item>
       </Form>
@@ -89,7 +112,13 @@ const ListUsers = ({
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [options, setOptions] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [input, setInput] = useState({ isLoading: false, domain: '' });
+  const [input, setInput] = useState({
+    isLoading: false,
+    domain: '',
+    address: '',
+    stellar_addr: '',
+    memo: '',
+  });
   const [forms, setForm] = useState(null);
 
   const saveFormRef = formRef => {
@@ -98,6 +127,22 @@ const ListUsers = ({
 
   const handleCancel = () => {
     setVisible(false);
+  };
+
+  const handleChange = record => {
+    setVisible(true);
+    setInput({
+      address: record.address,
+      stellar_addr: record.stellar_addr,
+      memo: record.memo,
+      domain: input.domain,
+    });
+  };
+
+  const openNotification = (type, message) => {
+    notification[type]({
+      message: message,
+    });
   };
 
   const handleCreate = () => {
@@ -117,11 +162,12 @@ const ListUsers = ({
       if (!!res.errMsg) {
         setMessage({ errCode: 1, message: res.errMsg });
       } else {
+        form.resetFields();
         setVisible(false);
         setData([
           ...data,
           {
-            address: values.address,
+            address: values.address + '*' + input.domain,
             email: user.email,
             memo: values.memo,
             stellar_addr: values.stellar_addr,
@@ -150,9 +196,9 @@ const ListUsers = ({
   };
 
   const onChangeDomain = async domain => {
+    setInput({ ...input, domain: domain });
     const dt = await onSearchDomain(user, domain);
     setData(dt);
-    setInput({ ...input, domain: domain });
   };
 
   const onSnapshot = snapshot => {
@@ -161,6 +207,16 @@ const ListUsers = ({
         setData(data => [...data, toJson(change.doc)]);
       }
     });
+  };
+
+  const removeFed = async record => {
+    const result = await deleteFed(record);
+    if (result.errMsg === '') {
+      setData(data => data.filter(row => row.address != record));
+      openNotification('success', 'Address has been deleted');
+    } else {
+      openNotification('error', result.errMsg);
+    }
   };
 
   const onSnapshotDom = snapshot => {
@@ -215,6 +271,7 @@ const ListUsers = ({
             onCreate={handleCreate}
             ref={saveFormRef}
             msg={msg}
+            record={input}
           />
           <br />
           <Select
@@ -252,9 +309,15 @@ const ListUsers = ({
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Change</a>
+                <a onClick={() => handleChange(record)}>Change</a>
                 <Divider type="vertical" />
-                <a>Delete</a>
+                <Popconfirm
+                  title="Are you sure want to delete this address?"
+                  okText={'Delete'}
+                  onConfirm={() => removeFed(record.address)}
+                >
+                  <a>Delete</a>
+                </Popconfirm>
               </span>
             )}
           />
