@@ -46,7 +46,6 @@ const FormAddress = ({
   const handleSubmit = () => {
     //Verification and validation data
     if (!state.user) {
-      // console.log(a);
       return setMessage({ errCode: 1, message: 'Please sign in first' });
     }
     if (!/^[a-zA-Z0-9\s]{5,}$/.test(input.address)) {

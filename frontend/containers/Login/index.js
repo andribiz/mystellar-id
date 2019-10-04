@@ -54,7 +54,6 @@ const Login = ({
             res.user.photoURL
           )
             .then(() => {
-              console.log('Document successfully written!');
               setStateNotify({ isLoading: false, loginMessage: '' });
             })
             .catch(e => {
@@ -79,7 +78,6 @@ const Login = ({
           res.user.photoURL
         )
           .then(() => {
-            console.log('Document successfully written!');
             setStateNotify({ isLoading: false, loginMessage: '' });
           })
           .catch(e => {

@@ -126,7 +126,6 @@ class FirebaseHelper {
         }
       });
     } catch (error) {
-      console.log(error);
       res = { errMsg: `Error : ${error}` };
     }
 

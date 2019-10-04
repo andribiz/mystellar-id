@@ -11,7 +11,6 @@ const isVerifiedDomain = (domain, callbackRes) => {
   };
   https
     .get(options, res => {
-      console.log(`status code : ${res.statusCode}`);
       if (res.statusCode != '200')
         callbackRes({ errCode: 1, message: `Error Code: ${res.statusCode}` });
       res.on('data', data => {
