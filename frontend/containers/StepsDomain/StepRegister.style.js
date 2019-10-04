@@ -21,15 +21,51 @@ const StepRegisterWrapper = styled.div`
 
   .card {
     width: 90%;
-    height: 220px;
+    height: 100%;
     margin-left: 5%;
   }
 
   .form {
     width: 100%;
+    height: 100%;
     margin-left: 5%;
     margin-right: 5%;
     display: inline-block;
+
+    @media (max-width: 300px) {
+      .default {
+        font-size: 5px;
+        padding: 1px 2px;
+        width: 2%;
+      }
+    }
+
+    @media (max-width: 583px) {
+      .default {
+        font-size: 8px;
+        padding: 4px 6px;
+        width: 5%;
+        display: inline-block;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .default {
+        font-size: 14px;
+        padding: 8px 12px;
+        width: 50%;
+        display: inline-block;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .default {
+        padding: 10px 16px;
+        font-size: 18px;
+        width: 50%;
+        display: inline-block;
+      }
+    }
   }
 
   .col {

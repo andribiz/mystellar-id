@@ -3,6 +3,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import { firebaseConfig } from './firebase.config';
 import isValidDomain from 'is-valid-domain';
+import { func } from 'prop-types';
 
 const valid =
   firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId;
@@ -17,6 +18,7 @@ class FirebaseHelper {
   EMAIL = 'email';
 
   constructor() {
+    this.sendPasswordResetEmail = this.sendPasswordResetEmail.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.register = this.register.bind(this);
@@ -40,6 +42,18 @@ class FirebaseHelper {
       } else {
         this.user = null;
       }
+    });
+  }
+
+  async sendPasswordResetEmail(email) {
+    return await this.auth.sendPasswordResetEmail(email).then(() => {
+      return true;
+    });
+  }
+
+  async confirmPasswordReset(code, password) {
+    return await this.auth.confirmPasswordReset(code, password).then(() => {
+      return true;
     });
   }
 

@@ -102,7 +102,7 @@ const StepSetting = ({
         <Heading content={'Validate your domain'} {...titleStyle} />
       </Box>
 
-      <Box className="button">
+      <Box className="form">
         <AlertMessage />
         {state.step <= 1 && (
           <Button
