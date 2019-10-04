@@ -34,7 +34,7 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
     const result = await deleteFed(record);
     if (result.errMsg === '') {
       setData(data => data.filter(row => row.address != record));
-      openNotification('success', 'Data Has Been Delete');
+      openNotification('success', 'Address has been deleted');
     } else {
       openNotification('error', result.errMsg);
     }
@@ -101,7 +101,8 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
                 <a onClick={() => setRecord(record)}>Change</a>
                 <Divider type="vertical" />
                 <Popconfirm
-                  title="Sure to Delete?"
+                  title="Are you sure want to delete this address?"
+                  okText={'Delete'}
                   onConfirm={() => removeDomain(record.address)}
                 >
                   <a>Delete</a>
@@ -121,6 +122,7 @@ ListMystellar.propTypes = {
   titleStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
   user: PropTypes.object,
+  loadData: PropTypes.func,
 };
 
 // Login default style
