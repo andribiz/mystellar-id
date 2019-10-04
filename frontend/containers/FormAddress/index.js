@@ -11,7 +11,6 @@ import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
 import 'antd/es/alert/style/css';
-import StellarBase from 'stellar-sdk';
 
 const { login, isAuthenticated, insertAddress, updateAddress } = FirebaseHelper;
 
@@ -50,15 +49,7 @@ const FormAddress = ({
     if (!state.user) {
       return setMessage({ errCode: 1, message: 'Please sign in first' });
     }
-    if (!/^[a-zA-Z0-9\s]{5,}$/.test(input.address)) {
-      return setMessage({
-        errCode: 1,
-        message: 'Address must be alphanumeric and minimum length 5',
-      });
-    }
-    if (!StellarBase.StrKey.isValidEd25519PublicKey(input.stellar_addr)) {
-      return setMessage({ errCode: 1, message: 'Not Valid stellar address' });
-    }
+
     setInput({ ...input, isLoading: true });
     //Mode Add
     if (state.mode === 'add') {
@@ -220,13 +211,9 @@ const FormAddress = ({
           label="Memo (Optional)"
         />
         <AlertMessage />
-        {modal == true ? (
-          <div></div>
-        ) : (
-          <div>
-            <LoginButtonGroup isLoggedIn={!!state.user} />
-          </div>
-        )}
+        <div>
+          <LoginButtonGroup isLoggedIn={!!state.user} />
+        </div>
       </Box>
     </FormAddressWrapper>
   );

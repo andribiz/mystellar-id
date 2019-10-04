@@ -5,22 +5,54 @@ import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
 import ListMystellarWrapper from './ListUsersWrapper.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Divider, Table, Select, Form, Modal } from 'antd';
+import {
+  Alert,
+  Divider,
+  Table,
+  Select,
+  Form,
+  Modal,
+  Popconfirm,
+  notification,
+} from 'antd';
 import 'antd/es/alert/style/css';
-import FormAddress from '../FormAddress';
+
 import Input from '../../elements/Input';
 import Text from '../../elements/Text';
 
 const { Column } = Table;
-const { onSnapshotFed, onSnapshotDomain, onSearchDomain } = FirebaseHelper;
+const {
+  onSnapshotFed,
+  onSnapshotDomain,
+  onSearchDomain,
+  insertAddress,
+  deleteFed,
+} = FirebaseHelper;
 const { Option } = Select;
 
-const modalFormAddress = ({ visible, onCancel, onCreate, form, domain }) => {
+const modalFormAddress = ({
+  visible,
+  onCancel,
+  onCreate,
+  form,
+  msg,
+  record,
+}) => {
   const [input, setInput] = useState({
     address: '',
     stellar_addr: '',
     memo: '',
   });
+
+  const { getFieldDecorator } = form;
+
+  const AlertMessage = () => {
+    if (msg.errCode === 0)
+      return <Alert message={msg.message} type="success" showIcon />;
+    else if (msg.errCode === 1)
+      return <Alert message={msg.message} type="error" showIcon />;
+    return null;
+  };
 
   return (
     <Modal
@@ -30,7 +62,35 @@ const modalFormAddress = ({ visible, onCancel, onCreate, form, domain }) => {
       onCancel={onCancel}
       onOk={onCreate}
     >
-      <FormAddress id="myForm" modal={true} domain={domain} />
+      <Form layout="vertical">
+        <Form.Item label="MyStellar Address">
+          {!!record.address ? (
+            <Text content={record.address} />
+          ) : (
+            getFieldDecorator('address', {
+              rules: [
+                { required: true, message: 'Please input', disable: true },
+              ],
+              initialValue: record.address.substr(record.address.indexOf('*')),
+            })(<Input />)
+          )}
+        </Form.Item>
+        <Form.Item label="Stellar Address">
+          {getFieldDecorator('stellar_addr', {
+            rules: [
+              { required: true, message: 'Please input Stellar Address' },
+            ],
+            initialValue: record.stellar_addr,
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="Memo (Optional)">
+          {getFieldDecorator('memo', {
+            rules: [{ required: false }],
+            initialValue: record.memo,
+          })(<Input />)}
+        </Form.Item>
+      </Form>
+      <AlertMessage />
     </Modal>
   );
 };
@@ -52,14 +112,14 @@ const ListUsers = ({
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [options, setOptions] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [input, setInput] = useState({ isLoading: false, value: '' });
+  const [input, setInput] = useState({
+    isLoading: false,
+    domain: '',
+    address: '',
+    stellar_addr: '',
+    memo: '',
+  });
   const [forms, setForm] = useState(null);
-
-  const handleSigning = () => {
-    login('google').then(result => {
-      setUser(result.user);
-    });
-  };
 
   const saveFormRef = formRef => {
     setForm(formRef);
@@ -69,11 +129,55 @@ const ListUsers = ({
     setVisible(false);
   };
 
+  const handleChange = record => {
+    setVisible(true);
+    setInput({
+      address: record.address,
+      stellar_addr: record.stellar_addr,
+      memo: record.memo,
+      domain: input.domain,
+    });
+  };
+
+  const openNotification = (type, message) => {
+    notification[type]({
+      message: message,
+    });
+  };
+
   const handleCreate = () => {
-    const form = formRef.props;
-    // console.log('Received values of form: ', values);
-    //  form.resetFields();
-    //  this.setState({ visible: false });
+    const form = forms;
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return;
+      }
+      const res = await insertAddress(
+        user.email,
+        input.domain,
+        values.address,
+        values.stellar_addr,
+        values.memo || null
+      );
+
+      if (!!res.errMsg) {
+        setMessage({ errCode: 1, message: res.errMsg });
+      } else {
+        form.resetFields();
+        setVisible(false);
+        setData([
+          ...data,
+          {
+            address: values.address + '*' + input.domain,
+            email: user.email,
+            memo: values.memo,
+            stellar_addr: values.stellar_addr,
+            memo_type: values.memo_type,
+          },
+        ]);
+      }
+
+      console.log('Received values of form: ', values);
+    });
   };
 
   const handleSubmit = () => {
@@ -91,10 +195,10 @@ const ListUsers = ({
     };
   };
 
-  const onChangeDomain = async value => {
-    const dt = await onSearchDomain(user, value);
+  const onChangeDomain = async domain => {
+    setInput({ ...input, domain: domain });
+    const dt = await onSearchDomain(user, domain);
     setData(dt);
-    setInput({ ...input, value: value });
   };
 
   const onSnapshot = snapshot => {
@@ -103,6 +207,16 @@ const ListUsers = ({
         setData(data => [...data, toJson(change.doc)]);
       }
     });
+  };
+
+  const removeFed = async record => {
+    const result = await deleteFed(record);
+    if (result.errMsg === '') {
+      setData(data => data.filter(row => row.address != record));
+      openNotification('success', 'Address has been deleted');
+    } else {
+      openNotification('error', result.errMsg);
+    }
   };
 
   const onSnapshotDom = snapshot => {
@@ -117,7 +231,7 @@ const ListUsers = ({
   };
 
   useEffect(() => {
-    const snap = onSnapshotFed(user, onSnapshot);
+    const snap = onSnapshotFed(user, input.domain, onSnapshot);
     const domain = onSnapshotDomain(user, onSnapshotDom);
     return () => {
       snap();
@@ -130,21 +244,13 @@ const ListUsers = ({
       <Button
         className="default"
         title="I'm Ready"
-        onClick={handleSubmit}
+        onClick={handSubmit}
         isLoading={input.isLoading}
         disabled={input.isLoading}
         {...btnStyle}
       />
     </Fragment>
   );
-
-  const AlertMessage = () => {
-    if (msg.errCode === 0)
-      return <Alert message={msg.message} type="success" showIcon />;
-    else if (msg.errCode === 1)
-      return <Alert message={msg.message} type="error" showIcon />;
-    return null;
-  };
 
   return (
     <ListMystellarWrapper>
@@ -160,11 +266,12 @@ const ListUsers = ({
             {...btnStyle}
           />
           <AddressCreateForm
-            ref={saveFormRef}
             visible={visible}
             onCancel={handleCancel}
             onCreate={handleCreate}
-            domain={input.value}
+            ref={saveFormRef}
+            msg={msg}
+            record={input}
           />
           <br />
           <Select
@@ -182,7 +289,6 @@ const ListUsers = ({
                 .indexOf(input.toLowerCase()) >= 0
             }
           >
-            <Option value="">---</Option>
             {options.map(item => (
               <Option value={item.label}>{item.label}</Option>
             ))}
@@ -203,9 +309,15 @@ const ListUsers = ({
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Change</a>
+                <a onClick={() => handleChange(record)}>Change</a>
                 <Divider type="vertical" />
-                <a>Delete</a>
+                <Popconfirm
+                  title="Are you sure want to delete this address?"
+                  okText={'Delete'}
+                  onConfirm={() => removeFed(record.address)}
+                >
+                  <a>Delete</a>
+                </Popconfirm>
               </span>
             )}
           />
