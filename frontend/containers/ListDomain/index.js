@@ -31,6 +31,7 @@ const ListDomain = ({ titleStyle, contentWrapper, user }) => {
 
   const toJson = doc => {
     return {
+      key: doc.id,
       id: doc.id,
       domain: doc.data().domain,
     };
@@ -55,7 +56,7 @@ const ListDomain = ({ titleStyle, contentWrapper, user }) => {
   return (
     <ListMystellarWrapper>
       <Box {...contentWrapper}>
-        <Heading content="Your Addresses" {...titleStyle} />
+        <Heading content="Your Domains" {...titleStyle} />
 
         <Table dataSource={data}>
           <Column title="Domain" dataIndex="domain" key="domain" />
