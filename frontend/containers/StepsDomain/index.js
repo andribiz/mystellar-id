@@ -42,7 +42,7 @@ const StepsDomain = ({ titleStyle, contentWrapper, user }) => {
   return (
     <StepsDomainWrapper>
       <Box {...contentWrapper}>
-        <Heading content={'Use Domain'} {...titleStyle} />
+        <Heading content={'New Domain'} {...titleStyle} />
 
         <Steps type="navigation" current={state.current}>
           <Step key={'1'} title={'Register'} />

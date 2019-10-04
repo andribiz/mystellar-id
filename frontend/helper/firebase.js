@@ -199,10 +199,6 @@ class FirebaseHelper {
     return this.auth.signOut();
   }
 
-  dbUser() {
-    return this.database.collection('user');
-  }
-
   isAuthenticated(onCompleted) {
     this.auth.onAuthStateChanged(user => {
       if (user) {

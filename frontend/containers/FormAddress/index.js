@@ -13,7 +13,7 @@ import { Alert } from 'antd';
 import 'antd/es/alert/style/css';
 import StellarBase from 'stellar-sdk';
 
-const { login, insertAddress, updateAddress } = FirebaseHelper;
+const { login, isAuthenticated, insertAddress, updateAddress } = FirebaseHelper;
 
 const FormAddress = ({
   title,
@@ -103,7 +103,14 @@ const FormAddress = ({
   };
 
   useEffect(() => {
-    editData();
+    console.log(state.user);
+
+    if (!state.user) {
+      console.log('masuk');
+      isAuthenticated(user => {
+        user && setState({ ...state, user: user });
+      });
+    } else editData();
   });
 
   const LoginButtonGroup = ({ isLoggedIn }) => (
