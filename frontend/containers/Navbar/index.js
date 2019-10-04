@@ -43,7 +43,7 @@ const Navbar = ({ isSimple }) => {
                 menuItems={navMenu}
                 offset={-84}
               />
-              <Link href={'/login'}>
+              <Link href="/login">
                 <Button className="trail" title="Console" />
               </Link>
             </>
