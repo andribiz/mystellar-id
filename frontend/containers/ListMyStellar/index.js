@@ -59,7 +59,7 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onSnapshotFed(user, onSnapshot);
+    const unsubscribe = onSnapshotFed(user, 'mystellar.id', onSnapshot);
     return () => {
       unsubscribe();
     };
@@ -78,7 +78,7 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
       <Box {...contentWrapper}>
         <Heading content="Your Addresses" {...titleStyle} />
 
-        <Table dataSource={data} scroll={{ x: '200%' }}>
+        <Table dataSource={data} scroll={{ x: 'max-content' }}>
           <Column
             title="Federation"
             dataIndex="address"
@@ -92,7 +92,6 @@ const ListMystellar = ({ titleStyle, contentWrapper, user, loadData }) => {
           />
           <Column title="Memo Type" dataIndex="memo_type" key="memo_type" />
           <Column title="Memo" dataIndex="memo" key="memo" />
-
           <Column
             title="Action"
             key="Action"

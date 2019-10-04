@@ -186,10 +186,11 @@ class FirebaseHelper {
     }
   }
 
-  onSnapshotFed(user, callMe) {
+  onSnapshotFed(user, domain, callMe) {
     return this.database
       .collection('federation')
       .where('email', '==', user.email)
+      .where('domain', '==', domain)
       .onSnapshot(snapshot => {
         callMe(snapshot);
       });
@@ -205,8 +206,7 @@ class FirebaseHelper {
       });
   }
 
-  async insertAddress(email, address, stellar, memo) {
-    const domain = '*mystellar.id';
+  async insertAddress(email, domain, address, stellar, memo) {
     try {
       let doc = await this.database
         .collection('federation')
@@ -219,6 +219,7 @@ class FirebaseHelper {
         .set({
           email: email,
           stellar_addr: stellar,
+          domain: domain,
           memo_type: 'text',
           memo: memo,
         });

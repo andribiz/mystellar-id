@@ -64,6 +64,7 @@ const FormAddress = ({
     if (state.mode === 'add') {
       insertAddress(
         state.user.email,
+        'mystellar.id',
         input.address,
         input.stellar_addr,
         input.memo
@@ -105,10 +106,7 @@ const FormAddress = ({
   };
 
   useEffect(() => {
-    console.log(state.user);
-
     if (!state.user) {
-      console.log('masuk');
       isAuthenticated(user => {
         user && setState({ ...state, user: user });
       });
