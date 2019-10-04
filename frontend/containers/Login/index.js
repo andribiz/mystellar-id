@@ -103,7 +103,7 @@ const Login = ({
         }}
         {...btnStyle}
       />
-      <Link href={'/forgotPassword'}>
+      <Link href="/forgot">
         <Button
           title="Forget Password"
           className={'withoutBg'}

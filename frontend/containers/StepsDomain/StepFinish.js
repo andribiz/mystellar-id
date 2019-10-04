@@ -24,7 +24,7 @@ const StepFinish = ({ titleStyle, btnStyle, descriptionStyle, restart }) => {
         />
       </Box>
       <Box className="button">
-        <Link href={'/console/federation-user'}>
+        <Link href="/console/federation-user">
           <Button className="default" title="Create Your User" {...btnStyle} />
         </Link>
         <Button
