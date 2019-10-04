@@ -82,6 +82,7 @@ const ForgetPassword = (
               />
               <Box>
                 <Input
+                  className="inputEmail"
                   size="large"
                   placeholder="Email"
                   value={stateForgot.email}

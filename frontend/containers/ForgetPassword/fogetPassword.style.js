@@ -33,6 +33,20 @@ const ForgotPasswordStyleWrapper = styled.div`
     }
   }
 
+  .default {
+    @media only screen and (max-width: 500px) {
+      width: 100%;
+      font-size: 10px;
+    }
+  }
+
+  .imputEmail {
+    @media only screen and (max-width: 500px) {
+      width: 100%;
+      font-size: 10px;
+    }
+  }
+
   .reusecore__input {
     margin-bottom: 30px;
     &.is-material {
