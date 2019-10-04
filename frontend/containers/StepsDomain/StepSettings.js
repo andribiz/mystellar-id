@@ -5,12 +5,26 @@ import StepSettingsWrapper from './StepSettings.style';
 import Text from '../../elements/Text';
 import PropTypes from 'prop-types';
 import Button from '../../elements/Button';
-import { Alert, Form } from 'antd';
+import { Alert } from 'antd';
+import { isVerifiedDomain } from '../../helper/DomainUtils';
+import FirebaseHelper from '../../helper/firebase';
 
-const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
+const { insertDomain } = FirebaseHelper;
+
+const StepSetting = ({
+  titleStyle,
+  btnStyle,
+  descriptionStyle,
+  prevStep,
+  nextStep,
+  domain,
+  user,
+}) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [state, setState] = useState({
     isLoading: false,
+    step: 0,
+    verified: false,
   });
 
   const AlertMessage = () => {
@@ -21,73 +35,115 @@ const StepSetting = ({ titleStyle, btnStyle, descriptionStyle, nextStep }) => {
     return null;
   };
 
+  const handleVerify = () => {
+    setState({ ...state, isLoading: true });
+    isVerifiedDomain(domain, res => {
+      setMessage(res);
+      res.errCode === 0
+        ? setState({ isLoading: false, step: 1, verified: true })
+        : setState({ ...state, isLoading: false });
+    });
+  };
+
+  const handleSave = async () => {
+    setState({ ...state, isLoading: true });
+    const res = await insertDomain(user, domain);
+    if (res.errMsg === '') {
+      setMessage({
+        errCode: 0,
+        message: 'Domains valid listed',
+      });
+      setState({ ...state, step: 2, isLoading: false });
+    } else {
+      setState({ ...state, isLoading: false });
+      setMessage({ errCode: 1, message: res.errMsg });
+    }
+  };
+
   return (
     <StepSettingsWrapper>
-      {/*<Box className="image">*/}
-      {/*  <img src={ImageSettings} className="streach"/>*/}
-      {/*</Box>*/}
       <Box className="card">
-        <Heading content={'Upload Config File'} {...titleStyle} />
-        {/*<Text*/}
-        {/*  content={*/}
-        {/*    'Upload this file to your server with location ./.well-known/stellar.toml. ' +*/}
-        {/*    'The request should be https://yourdomain/.well-known/stellar.toml.' +*/}
-        {/*    'Domain must be use https. file must be corss. More help click this link'*/}
-        {/*  }*/}
-        {/*  {...descriptionStyle}*/}
-        {/*/>*/}
+        <Heading content={'Setting your server'} {...titleStyle} />
         <Text
           className="text"
-          content={
-            'Upload this file to your server with location ./.well-known/stellar.toml. '
-          }
+          content={'Here its the rules. '}
           {...descriptionStyle}
         />
         <Text
           className="text"
-          content={
-            'The request should be https://yourdomain/.well-known/stellar.toml.'
-          }
+          dangerouslySetInnerHTML={{
+            __html:
+              '1. Upload config file <a href="https://firebasestorage.googleapis.com/v0/b/mystellar-id.appspot.com/o/stellar.toml?alt=media&token=2ddd6d5f-a933-47be-814f-4c2882e1fc03">(stellar.toml)</a>' +
+              ' to your server with directory root/.well-known/stellar.toml.',
+          }}
+          {...descriptionStyle}
+        />
+        <Text
+          className="text"
+          content={'2. Your Domain must be use https.'}
           {...descriptionStyle}
         />
         <Text
           className="text"
           content={
-            'Domain must be use https. file must be corss. More help click this link'
+            '3. You must enable CORS on your server so clients can send requests'
           }
           {...descriptionStyle}
         />
-        <Heading content={'Test Config File'} {...titleStyle} />
         <Text
-          content={'Validate your setting with this config'}
+          className="text"
+          dangerouslySetInnerHTML={{
+            __html:
+              'Need more help? <a href="https://www.stellar.org/developers/guides/concepts/federation.html">click this link</a>' +
+              '. Done? Now you need to validate your domain.',
+          }}
           {...descriptionStyle}
         />
+        <Heading content={'Validate your domain'} {...titleStyle} />
       </Box>
 
       <Box className="button">
         <AlertMessage />
-        <Form layout="inline">
-          <Form.Item>
-            <Button
-              className="default"
-              title="Test"
-              isLoading={state.isLoading}
-              disabled={state.isLoading}
-              {...btnStyle}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              className="withoutBg"
-              variant="textButton"
-              title="Next >"
-              onClick={nextStep}
-              isLoading={state.isLoading}
-              disabled={state.isLoading}
-              {...btnStyle}
-            />
-          </Form.Item>
-        </Form>
+        {state.step <= 1 && (
+          <Button
+            className="withoutBg"
+            variant="textButton"
+            title="< Prev"
+            onClick={prevStep}
+            disabled={state.isLoading}
+            {...btnStyle}
+          />
+        )}
+        {state.step === 0 && (
+          <Button
+            className="default"
+            title="Verify"
+            onClick={handleVerify}
+            isLoading={state.isLoading}
+            disabled={state.isLoading}
+            {...btnStyle}
+          />
+        )}
+        {state.step === 1 && (
+          <Button
+            className="default"
+            title="Save Domain"
+            onClick={handleSave}
+            isLoading={state.isLoading}
+            disabled={state.isLoading}
+            {...btnStyle}
+          />
+        )}
+        {state.step === 2 && (
+          <Button
+            className="withoutBg"
+            variant="textButton"
+            title="Next >"
+            onClick={nextStep}
+            disabled={state.isLoading}
+            {...btnStyle}
+          />
+        )}
       </Box>
     </StepSettingsWrapper>
   );

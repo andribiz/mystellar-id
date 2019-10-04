@@ -1,8 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
-import Button from '../../elements/Button';
 import StepsDomainWrapper from './StepsDomain.style';
 import { Steps } from 'antd';
 import 'antd/es/alert/style/css';
@@ -13,20 +12,31 @@ import StepFinish from './StepFinish';
 const { Step } = Steps;
 
 const StepsDomain = ({ titleStyle, contentWrapper, user }) => {
-  const [state, setState] = useState({ current: 0 });
+  const [state, setState] = useState({ current: 0, domain: '' });
 
-  const next = () => {
-    console.log(state.current);
-    setState({ current: state.current + 1 });
+  const next = domain => {
+    domain
+      ? setState({ ...state, current: state.current + 1, domain: domain })
+      : setState({ ...state, current: state.current + 1 });
   };
+
   const prev = () => {
-    setState({ current: state.current - 1 });
+    setState({ ...state, current: state.current - 1 });
+  };
+
+  const restart = () => {
+    setState({ ...state, current: 0 });
   };
 
   const windowSteps = [
     <StepRegister user={user} nextStep={next} />,
-    <StepSetting nextStep={next} />,
-    <StepFinish />,
+    <StepSetting
+      prevStep={prev}
+      nextStep={next}
+      domain={state.domain}
+      user={user}
+    />,
+    <StepFinish restart={restart} />,
   ];
 
   return (

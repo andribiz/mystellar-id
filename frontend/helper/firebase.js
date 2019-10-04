@@ -27,6 +27,7 @@ class FirebaseHelper {
     this.onSnapshotDomain = this.onSnapshotDomain.bind(this);
     this.onSnapshotFed = this.onSnapshotFed.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.isValidDomain = this.isValidDomain.bind(this);
     this.logout = this.logout.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
@@ -112,26 +113,29 @@ class FirebaseHelper {
       return { errMsg: 'Domain name is not valid domain' };
     }
 
-    const query = await this.database
-      .collection('user')
-      .doc(user.uid)
-      .collection('domains')
-      .where('domain', '==', domain)
-      .get();
-
     let res = { errMsg: '' };
-    query.forEach(doc => {
-      if (!!doc.data()) {
-        res = { errMsg: 'Domain is already exists' };
-      }
-    });
+    try {
+      const query = await this.database
+        .collectionGroup('domains')
+        .where('domain', '==', domain)
+        .get();
+
+      query.forEach(doc => {
+        if (!!doc.data()) {
+          res = { errMsg: 'Domain is already exists' };
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      res = { errMsg: `Error : ${error}` };
+    }
 
     return res;
   }
 
   async insertDomain(user, domain) {
     try {
-      const res = this.isValidDomain(user, domain);
+      const res = await this.isValidDomain(user, domain);
 
       if (res.errMsg !== '') {
         return res;
