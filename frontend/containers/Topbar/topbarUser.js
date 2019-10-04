@@ -35,6 +35,7 @@ const TopbarUser = ({ user }) => {
       arrowPointAtCenter={true}
       placement="bottomLeft"
     >
+      {/*<TopbarDropdownWrapper>*/}
       <div className="isoImgWrapper">
         {user.photoURL ? (
           <img alt="user" src={user.photoURL} />
@@ -43,6 +44,7 @@ const TopbarUser = ({ user }) => {
         )}
         <span className="userActivity online" />
       </div>
+      {/*</TopbarDropdownWrapper>*/}
     </Popover>
   );
 };

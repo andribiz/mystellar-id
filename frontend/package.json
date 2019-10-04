@@ -15,7 +15,7 @@
     "@redq/reuse-modal": "^1.1.9",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "latest",
-    "antd": "^3.23.3",
+    "antd": "^4.0.0-alpha.6",
     "cors": "^2.8.5",
     "firebase": "^6.6.1",
     "firebase-admin": "^8.6.0",

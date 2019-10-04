@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../../elements/Input';
 import Button from '../../elements/Button';
 import ForgotPasswordStyleWrapper from '../../containers/ForgetPassword/fogetPassword.style';
@@ -8,6 +8,8 @@ import Text from '../../elements/Text';
 import FirebaseHelper from '../../helper/firebase';
 import PropTypes from 'prop-types';
 import { Alert } from 'antd';
+import { Icon } from 'react-icons-kit';
+import Fade from 'react-reveal/Fade';
 
 const { sendPasswordResetEmail } = FirebaseHelper;
 
@@ -19,7 +21,6 @@ const ForgetPassword = ({
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [stateForgot, setStateForgot] = useState({
-    isLoading: false,
     email: '',
   });
 
@@ -38,6 +39,8 @@ const ForgetPassword = ({
         message: 'Please go to your email to reset your password',
       });
     });
+
+    setStateForgot({ email: '' });
   };
 
   return (
@@ -58,15 +61,18 @@ const ForgetPassword = ({
           />
         </Box>
         <AlertMessage />
+
         <Box>
-          <Button
-            className="default"
-            title="Send Request"
-            {...btnStyle}
-            onClick={() => {
-              handleForgot(FirebaseHelper.GOOGLE);
-            }}
-          />
+          {stateForgot.email !== '' && (
+            <Button
+              className="default"
+              title="Send Request"
+              {...btnStyle}
+              onClick={() => {
+                handleForgot(FirebaseHelper.GOOGLE);
+              }}
+            />
+          )}
         </Box>
       </Box>
     </ForgotPasswordStyleWrapper>
