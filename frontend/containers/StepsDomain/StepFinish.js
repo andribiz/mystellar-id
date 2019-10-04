@@ -44,6 +44,7 @@ StepFinish.propTypes = {
   btnStyle: PropTypes.object,
   descriptionStyle: PropTypes.object,
   user: PropTypes.object,
+  restart: PropTypes.func,
 };
 
 StepFinish.defaultProps = {
