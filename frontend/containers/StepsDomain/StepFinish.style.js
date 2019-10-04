@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 import { themeGet } from 'styled-system';
-// import BgImage from '../../assets/image/bg-finish.png';
-import BgImage from '../../assets/image/bg-finish-new.png';
 
 const StepFinishWrapper = styled.div`
   width: 100%;

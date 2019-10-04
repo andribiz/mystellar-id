@@ -4,7 +4,7 @@ const colors = {
   inactiveField: '#f2f2f2',
   inactiveButton: '#b7dbdd',
   inactiveIcon: '#EBEBEB',
-  primaryHover: '#006b70',
+  primaryHover: '#b7dbdd',
   secondary: '#ff5b60',
   secondaryHover: '#FF282F',
   yellow: '#fdb32a',
