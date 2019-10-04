@@ -7,20 +7,35 @@ import ListMystellarWrapper from './ListUsersWrapper.style';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert, Divider, Table, Select, Form, Modal } from 'antd';
 import 'antd/es/alert/style/css';
-import FormAddress from '../FormAddress';
+
 import Input from '../../elements/Input';
 import Text from '../../elements/Text';
 
 const { Column } = Table;
-const { onSnapshotFed, onSnapshotDomain, onSearchDomain } = FirebaseHelper;
+const {
+  onSnapshotFed,
+  onSnapshotDomain,
+  onSearchDomain,
+  insertAddress,
+} = FirebaseHelper;
 const { Option } = Select;
 
-const modalFormAddress = ({ visible, onCancel, onCreate, form, domain }) => {
+const modalFormAddress = ({ visible, onCancel, onCreate, form, msg }) => {
   const [input, setInput] = useState({
     address: '',
     stellar_addr: '',
     memo: '',
   });
+
+  const { getFieldDecorator } = form;
+
+  const AlertMessage = () => {
+    if (msg.errCode === 0)
+      return <Alert message={msg.message} type="success" showIcon />;
+    else if (msg.errCode === 1)
+      return <Alert message={msg.message} type="error" showIcon />;
+    return null;
+  };
 
   return (
     <Modal
@@ -30,7 +45,29 @@ const modalFormAddress = ({ visible, onCancel, onCreate, form, domain }) => {
       onCancel={onCancel}
       onOk={onCreate}
     >
-      <FormAddress id="myForm" modal={true} domain={domain} />
+      <Form layout="vertical">
+        <Form.Item label="MyStellar Address">
+          {getFieldDecorator('address', {
+            rules: [{ required: true, message: 'Please input' }],
+            initialValue: '',
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="Stellar Address">
+          {getFieldDecorator('stellar_addr', {
+            rules: [
+              { required: true, message: 'Please input Stellar Address' },
+            ],
+            initialValue: '',
+          })(<Input />)}
+        </Form.Item>
+        <Form.Item label="Memo (Optional)">
+          {getFieldDecorator('memo', {
+            rules: [{ required: false }],
+            initialValue: '',
+          })(<Input />)}
+        </Form.Item>
+      </Form>
+      <AlertMessage />
     </Modal>
   );
 };
@@ -52,14 +89,8 @@ const ListUsers = ({
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [options, setOptions] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [input, setInput] = useState({ isLoading: false, value: '' });
+  const [input, setInput] = useState({ isLoading: false, domain: '' });
   const [forms, setForm] = useState(null);
-
-  const handleSigning = () => {
-    login('google').then(result => {
-      setUser(result.user);
-    });
-  };
 
   const saveFormRef = formRef => {
     setForm(formRef);
@@ -70,10 +101,37 @@ const ListUsers = ({
   };
 
   const handleCreate = () => {
-    const form = formRef.props;
-    // console.log('Received values of form: ', values);
-    //  form.resetFields();
-    //  this.setState({ visible: false });
+    const form = forms;
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return;
+      }
+      const res = await insertAddress(
+        user.email,
+        input.domain,
+        values.address,
+        values.stellar_addr,
+        values.memo || null
+      );
+
+      if (!!res.errMsg) {
+        setMessage({ errCode: 1, message: res.errMsg });
+      } else {
+        setVisible(false);
+        setData([
+          ...data,
+          {
+            address: values.address,
+            email: user.email,
+            memo: values.memo,
+            stellar_addr: values.stellar_addr,
+            memo_type: values.memo_type,
+          },
+        ]);
+      }
+
+      console.log('Received values of form: ', values);
+    });
   };
 
   const handleSubmit = () => {
@@ -91,10 +149,10 @@ const ListUsers = ({
     };
   };
 
-  const onChangeDomain = async value => {
-    const dt = await onSearchDomain(user, value);
+  const onChangeDomain = async domain => {
+    const dt = await onSearchDomain(user, domain);
     setData(dt);
-    setInput({ ...input, value: value });
+    setInput({ ...input, domain: domain });
   };
 
   const onSnapshot = snapshot => {
@@ -117,7 +175,7 @@ const ListUsers = ({
   };
 
   useEffect(() => {
-    const snap = onSnapshotFed(user, onSnapshot);
+    const snap = onSnapshotFed(user, input.domain, onSnapshot);
     const domain = onSnapshotDomain(user, onSnapshotDom);
     return () => {
       snap();
@@ -130,21 +188,13 @@ const ListUsers = ({
       <Button
         className="default"
         title="I'm Ready"
-        onClick={handleSubmit}
+        onClick={handSubmit}
         isLoading={input.isLoading}
         disabled={input.isLoading}
         {...btnStyle}
       />
     </Fragment>
   );
-
-  const AlertMessage = () => {
-    if (msg.errCode === 0)
-      return <Alert message={msg.message} type="success" showIcon />;
-    else if (msg.errCode === 1)
-      return <Alert message={msg.message} type="error" showIcon />;
-    return null;
-  };
 
   return (
     <ListMystellarWrapper>
@@ -160,11 +210,11 @@ const ListUsers = ({
             {...btnStyle}
           />
           <AddressCreateForm
-            ref={saveFormRef}
             visible={visible}
             onCancel={handleCancel}
             onCreate={handleCreate}
-            domain={input.value}
+            ref={saveFormRef}
+            msg={msg}
           />
           <br />
           <Select
@@ -182,7 +232,6 @@ const ListUsers = ({
                 .indexOf(input.toLowerCase()) >= 0
             }
           >
-            <Option value="">---</Option>
             {options.map(item => (
               <Option value={item.label}>{item.label}</Option>
             ))}

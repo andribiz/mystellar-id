@@ -4,6 +4,7 @@ import 'firebase/auth';
 import { firebaseConfig } from './firebase.config';
 import isValidDomain from 'is-valid-domain';
 import { func } from 'prop-types';
+import StellarBase from 'stellar-sdk';
 
 const valid =
   firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId;
@@ -221,6 +222,13 @@ class FirebaseHelper {
   }
 
   async insertAddress(email, domain, address, stellar, memo) {
+    if (!/^[a-zA-Z0-9\s]{5,}$/.test(address)) {
+      return { errMsg: 'Address must be alphanumeric and minimum length 5' };
+    }
+    if (!StellarBase.StrKey.isValidEd25519PublicKey(stellar)) {
+      return { errMsg: 'Not Valid stellar address' };
+    }
+
     try {
       let doc = await this.database
         .collection('federation')
@@ -229,7 +237,7 @@ class FirebaseHelper {
       if (doc.exists) return { errMsg: 'Address is already used' };
       await this.database
         .collection('federation')
-        .doc(address + domain)
+        .doc(address + '*' + domain)
         .set({
           email: email,
           stellar_addr: stellar,
