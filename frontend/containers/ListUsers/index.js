@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
@@ -14,19 +14,17 @@ import {
   Modal,
   Popconfirm,
   notification,
+  Input,
 } from 'antd';
 import 'antd/es/alert/style/css';
 
-import Input from '../../elements/Input';
-import Text from '../../elements/Text';
-
 const { Column } = Table;
 const {
-  onSnapshotFed,
   onSnapshotDomain,
   onSearchDomain,
   insertAddress,
   deleteFed,
+  updateAddress,
 } = FirebaseHelper;
 const { Option } = Select;
 
@@ -38,12 +36,6 @@ const modalFormAddress = ({
   msg,
   record,
 }) => {
-  const [input, setInput] = useState({
-    address: '',
-    stellar_addr: '',
-    memo: '',
-  });
-
   const { getFieldDecorator } = form;
 
   const AlertMessage = () => {
@@ -58,22 +50,16 @@ const modalFormAddress = ({
     <Modal
       visible={visible}
       title="Create a new collection"
-      okText="Create"
+      okText={record.address ? 'Edit' : 'Create'}
       onCancel={onCancel}
       onOk={onCreate}
     >
       <Form layout="vertical">
         <Form.Item label="MyStellar Address">
-          {!!record.address ? (
-            <Text content={record.address} />
-          ) : (
-            getFieldDecorator('address', {
-              rules: [
-                { required: true, message: 'Please input', disable: true },
-              ],
-              initialValue: record.address.substr(record.address.indexOf('*')),
-            })(<Input />)
-          )}
+          {getFieldDecorator('address', {
+            rules: [{ disabled: true, message: 'Please input' }],
+            initialValue: record.address,
+          })(<Input disabled={!!record.address ? true : false} />)}
         </Form.Item>
         <Form.Item label="Stellar Address">
           {getFieldDecorator('stellar_addr', {
@@ -103,9 +89,9 @@ const ListUsers = ({
   btnStyle,
   titleStyle,
   contentWrapper,
-  descriptionStyle,
-  hintTextStyle,
-  googleButtonStyle,
+  actionWrapper,
+  actionStyle,
+  domainStyle,
   user,
 }) => {
   const [data, setData] = useState([]);
@@ -114,12 +100,14 @@ const ListUsers = ({
   const [visible, setVisible] = useState(false);
   const [input, setInput] = useState({
     isLoading: false,
-    domain: '',
     address: '',
     stellar_addr: '',
     memo: '',
+    email: user.email,
+    mode: 'add',
   });
   const [forms, setForm] = useState(null);
+  const [domains, setDomain] = useState('');
 
   const saveFormRef = formRef => {
     setForm(formRef);
@@ -135,7 +123,8 @@ const ListUsers = ({
       address: record.address,
       stellar_addr: record.stellar_addr,
       memo: record.memo,
-      domain: input.domain,
+      domain: domains,
+      mode: 'edit',
     });
   };
 
@@ -147,67 +136,79 @@ const ListUsers = ({
 
   const handleCreate = () => {
     const form = forms;
+
     form.validateFields(async (err, values) => {
       if (err) {
         return;
       }
-      const res = await insertAddress(
-        user.email,
-        input.domain,
-        values.address,
-        values.stellar_addr,
-        values.memo || null
-      );
-
-      if (!!res.errMsg) {
-        setMessage({ errCode: 1, message: res.errMsg });
+      if (input.mode === 'edit') {
+        setInput({
+          ...input,
+          email: user.email,
+          stellar_addr: values.stellar_addr,
+          memo: values.memo,
+        });
+        const res = await updateAddress(
+          user.email,
+          values.stellar_addr,
+          values.memo
+        );
+        if (!!res.errMsg) {
+          setMessage({ errCode: 1, message: res.errMsg });
+        } else {
+          data.map(MapData, values);
+          setData(data);
+          form.resetFields();
+          setVisible(false);
+        }
       } else {
-        form.resetFields();
-        setVisible(false);
-        setData([
-          ...data,
-          {
-            address: values.address + '*' + input.domain,
-            email: user.email,
-            memo: values.memo,
-            stellar_addr: values.stellar_addr,
-            memo_type: values.memo_type,
-          },
-        ]);
-      }
+        const res = await insertAddress(
+          user.email,
+          domains,
+          values.address,
+          values.stellar_addr,
+          values.memo || null
+        );
 
+        if (!!res.errMsg) {
+          setMessage({ errCode: 1, message: res.errMsg });
+        } else {
+          form.resetFields();
+          setVisible(false);
+          setData([
+            ...data,
+            {
+              address: values.address + '*' + domains,
+              email: user.email,
+              memo: values.memo,
+              stellar_addr: values.stellar_addr,
+              memo_type: values.memo_type,
+            },
+          ]);
+        }
+      }
       console.log('Received values of form: ', values);
     });
   };
 
   const handleSubmit = () => {
+    setInput({ stellar_addr: '', address: '', memo: '' });
     setVisible(true);
   };
 
-  const toJson = doc => {
-    const dt = doc.data();
-    return {
-      address: doc.id,
-      email: dt.email,
-      memo: dt.memo,
-      stellar_addr: dt.stellar_addr,
-      memo_type: dt.memo_type,
-    };
-  };
-
-  const onChangeDomain = async domain => {
-    setInput({ ...input, domain: domain });
-    const dt = await onSearchDomain(user, domain);
+  const onChangeDomain = async domainVal => {
+    setDomain(domainVal);
+    const dt = await onSearchDomain(user, domainVal);
     setData(dt);
   };
 
-  const onSnapshot = snapshot => {
-    snapshot.docChanges().forEach(change => {
-      if (change.type === 'added') {
-        setData(data => [...data, toJson(change.doc)]);
-      }
-    });
-  };
+  function MapData(item) {
+    if (item.address === this.address) {
+      item.stellar_addr = this.stellar_addr;
+      item.memo = this.memo;
+    }
+    return item;
+  }
 
   const removeFed = async record => {
     const result = await deleteFed(record);
@@ -231,68 +232,54 @@ const ListUsers = ({
   };
 
   useEffect(() => {
-    const snap = onSnapshotFed(user, input.domain, onSnapshot);
     const domain = onSnapshotDomain(user, onSnapshotDom);
     return () => {
-      snap();
       domain();
     };
   }, []);
 
-  const LoginButtonGroup = ({ isLoggedIn }) => (
-    <Fragment>
-      <Button
-        className="default"
-        title="I'm Ready"
-        onClick={handSubmit}
-        isLoading={input.isLoading}
-        disabled={input.isLoading}
-        {...btnStyle}
-      />
-    </Fragment>
-  );
-
   return (
     <ListMystellarWrapper>
+      <AddressCreateForm
+        visible={visible}
+        onCancel={handleCancel}
+        onCreate={handleCreate}
+        ref={saveFormRef}
+        msg={msg}
+        record={input}
+      />
       <Box {...contentWrapper}>
-        <Box>
-          <Heading content="Your Addresses" {...titleStyle} />
-          <Button
-            className="default"
-            title="Add"
-            onClick={handleSubmit}
-            isLoading={input.isLoading}
-            disabled={input.isLoading}
-            {...btnStyle}
-          />
-          <AddressCreateForm
-            visible={visible}
-            onCancel={handleCancel}
-            onCreate={handleCreate}
-            ref={saveFormRef}
-            msg={msg}
-            record={input}
-          />
-          <br />
-          <Select
-            showSearch
-            style={{ width: '100%' }}
-            placeholder="Select a person"
-            optionFilterProp="children"
-            onChange={onChangeDomain}
-            // onFocus={onFocus}
-            // onBlur={onBlur}
-            // onSearch={onSearch}
-            filterOption={(input, option) =>
-              option.props.children
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            {options.map(item => (
-              <Option value={item.label}>{item.label}</Option>
-            ))}
-          </Select>
+        <Heading content="Your Addresses" {...titleStyle} />
+
+        <Box {...actionWrapper}>
+          <Box {...actionStyle}>
+            <Button
+              className="default"
+              title="Add User"
+              onClick={handleSubmit}
+              isLoading={input.isLoading}
+              disabled={input.isLoading}
+              {...btnStyle}
+            />
+          </Box>
+          <Box {...domainStyle}>
+            <Select
+              showSearch
+              style={{ width: '100%' }}
+              placeholder="Select domain"
+              optionFilterProp="children"
+              onChange={onChangeDomain}
+              filterOption={(input, option) =>
+                option.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {options.map(item => (
+                <Option value={item.label}>{item.label}</Option>
+              ))}
+            </Select>
+          </Box>
         </Box>
 
         <Table dataSource={data}>
@@ -331,10 +318,10 @@ const ListUsers = ({
 ListUsers.propTypes = {
   btnStyle: PropTypes.object,
   titleStyle: PropTypes.object,
-  hintTextStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
-  descriptionStyle: PropTypes.object,
-  googleButtonStyle: PropTypes.object,
+  actionWrapper: PropTypes.object,
+  actionStyle: PropTypes.object,
+  domainStyle: PropTypes.object,
 };
 
 // Login default style
@@ -349,22 +336,15 @@ ListUsers.defaultProps = {
     mb: '10px',
   },
   // Description default style
-  descriptionStyle: {
-    color: 'rgba(52, 61, 72, 0.8)',
-    fontSize: '15px',
-    lineHeight: '26px',
-    letterSpacing: '-0.025em',
-    mb: '23px',
-    ml: '1px',
+  actionStyle: {
+    width: ['100%', '100%', '50%', '50%', '50%'],
   },
-  hintTextStyle: {
-    color: 'rgba(52, 61, 72, 0.8)',
-    fontSize: '12px',
-    lineHeight: '20px',
-    letterSpacing: '-0.025em',
-    mb: '10px',
-    mt: '-20px',
-    ml: '1px',
+  domainStyle: {
+    width: ['100%', '100%', '50%', '50%', '50%'],
+  },
+  actionWrapper: {
+    display: 'flex',
+    padding: '10px',
   },
   // Content wrapper style
   contentWrapper: {

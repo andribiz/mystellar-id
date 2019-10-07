@@ -62,7 +62,7 @@ const StepSetting = ({
 
   return (
     <StepSettingsWrapper>
-      <Box className="card">
+      <Box>
         <Heading content={'Setting your server'} {...titleStyle} />
         <Text
           className="text"
@@ -102,7 +102,7 @@ const StepSetting = ({
         <Heading content={'Validate your domain'} {...titleStyle} />
       </Box>
 
-      <Box className="form">
+      <Box>
         <AlertMessage />
         {state.step <= 1 && (
           <Button

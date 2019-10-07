@@ -71,7 +71,7 @@ const FormAddress = ({
     }
     //Mode Edit
     else {
-      updateAddress(input).then(res => {
+      updateAddress({ ...input }).then(res => {
         res.errMsg === ''
           ? setMessage({
               errCode: 0,
