@@ -35,17 +35,6 @@ const nextConfig = {
     return config;
   },
   distDir: '../dist/functions/next',
-  exportPathMap: function() {
-    return {
-      '/': { page: '/' },
-      '/login': { page: '/login' },
-      '/console': { page: '/console' },
-      '/console/': { page: '/console' },
-      '/console/federation': { page: '/console/federation' },
-      '/console/federation-user': { page: '/console/federation-user' },
-      '/console/not-yet': { page: '/console/not-yet' },
-    };
-  },
 };
 
 module.exports = withPlugins(
