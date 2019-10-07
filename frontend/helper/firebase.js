@@ -80,11 +80,15 @@ class FirebaseHelper {
   }
 
   async updateAddress(address, stellar_addr, memo) {
+    if (!StellarBase.StrKey.isValidEd25519PublicKey(stellar_addr)) {
+      return { errMsg: 'Not Valid stellar address' };
+    }
+
     try {
       await this.database
         .collection('federation')
         .doc(address)
-        .set({ stellar_addr: stellar_addr, memo: memo });
+        .update({ stellar_addr: stellar_addr, memo: memo });
       return { errMsg: '' };
     } catch (err) {
       return { errMsg: err.message };
