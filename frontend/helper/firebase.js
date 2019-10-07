@@ -84,12 +84,12 @@ class FirebaseHelper {
     return await this.auth.createUserWithEmailAndPassword(email, password);
   }
 
-  async updateAddress(input) {
+  async updateAddress(address, stellar_addr, memo) {
     try {
-      let docs = await this.database
+      await this.database
         .collection('federation')
-        .doc(input.address)
-        .set({ ...input, stellar_addr: input.stellar_addr, memo: input.memo });
+        .doc(address)
+        .set({ stellar_addr: stellar_addr, memo: memo });
       return { errMsg: '' };
     } catch (err) {
       return { errMsg: err.message };

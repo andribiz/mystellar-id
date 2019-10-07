@@ -148,13 +148,11 @@ const ListUsers = ({
           stellar_addr: values.stellar_addr,
           memo: values.memo,
         });
-        const res = await updateAddress({
-          email: user.email,
-          stellar_addr: values.stellar_addr,
-          memo: values.memo,
-          domain: domains,
-          address: input.address,
-        });
+        const res = await updateAddress(
+          user.email,
+          values.stellar_addr,
+          values.memo
+        );
         if (!!res.errMsg) {
           setMessage({ errCode: 1, message: res.errMsg });
         } else {
@@ -200,13 +198,11 @@ const ListUsers = ({
 
   const onChangeDomain = async domainVal => {
     setDomain(domainVal);
-    console.log(domains);
     const dt = await onSearchDomain(user, domainVal);
     setData(dt);
   };
 
   function MapData(item) {
-    console.log(this.address);
     if (item.address === this.address) {
       item.stellar_addr = this.stellar_addr;
       item.memo = this.memo;
