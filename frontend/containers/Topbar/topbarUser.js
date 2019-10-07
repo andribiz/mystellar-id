@@ -4,6 +4,7 @@ import TopbarDropdownWrapper from './topbarDropdown.style';
 import userpic from '../../assets/image/user.png';
 import FirebaseHelper from '../../helper/firebase';
 import { useRouter } from 'next/router';
+import Image from '../../elements/Image';
 
 const { logout } = FirebaseHelper;
 
@@ -38,9 +39,19 @@ const TopbarUser = ({ user }) => {
       {/*<TopbarDropdownWrapper>*/}
       <div className="isoImgWrapper">
         {user.photoURL ? (
-          <img alt="user" src={user.photoURL} />
+          <Image
+            className="imageUser"
+            src={user.photoURL}
+            alt="user"
+            style={{ width: 40, height: 40, borderRadius: 40 / 2 }}
+          />
         ) : (
-          <img alt="user" src={userpic} />
+          <Image
+            className="imageUser"
+            src={userpic}
+            alt="user"
+            style={{ width: 40, height: 40, borderRadius: 40 / 2 }}
+          />
         )}
         <span className="userActivity online" />
       </div>

@@ -169,12 +169,6 @@ const TopbarDropdownWrapper = styled.div`
         flex-shrink: 0;
         background-color: ${palette('grayscale', 9)};
         ${borderRadius('50%')};
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
       }
 
       .isoListContent {

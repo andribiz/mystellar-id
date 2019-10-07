@@ -5,6 +5,7 @@ import { firebaseConfig } from './firebase.config';
 import isValidDomain from 'is-valid-domain';
 import { func } from 'prop-types';
 import StellarBase from 'stellar-sdk';
+import { getURL } from 'next/dist/next-server/lib/utils';
 
 const valid =
   firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId;
@@ -48,12 +49,6 @@ class FirebaseHelper {
 
   async sendPasswordResetEmail(email) {
     return await this.auth.sendPasswordResetEmail(email).then(() => {
-      return true;
-    });
-  }
-
-  async confirmPasswordReset(code, password) {
-    return await this.auth.confirmPasswordReset(code, password).then(() => {
       return true;
     });
   }
