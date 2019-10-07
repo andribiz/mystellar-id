@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
@@ -35,6 +35,7 @@ const modalFormAddress = ({
   form,
   msg,
   record,
+  loading,
 }) => {
   const { getFieldDecorator } = form;
 
@@ -49,17 +50,18 @@ const modalFormAddress = ({
   return (
     <Modal
       visible={visible}
-      title="Create a new collection"
-      okText={record.address ? 'Edit' : 'Create'}
+      title="Create a new Address"
+      okText={'Save'}
       onCancel={onCancel}
       onOk={onCreate}
+      confirmLoading={loading}
     >
       <Form layout="vertical">
         <Form.Item label="MyStellar Address">
           {getFieldDecorator('address', {
             rules: [{ disabled: true, message: 'Please input' }],
             initialValue: record.address,
-          })(<Input disabled={!!record.address ? true : false} />)}
+          })(<Input disabled={record.mode === 'edit' ? true : false} />)}
         </Form.Item>
         <Form.Item label="Stellar Address">
           {getFieldDecorator('stellar_addr', {
@@ -75,8 +77,8 @@ const modalFormAddress = ({
             initialValue: record.memo,
           })(<Input />)}
         </Form.Item>
+        <AlertMessage />
       </Form>
-      <AlertMessage />
     </Modal>
   );
 };
@@ -104,7 +106,7 @@ const ListUsers = ({
     stellar_addr: '',
     memo: '',
     email: user.email,
-    mode: 'add',
+    mode: '',
   });
   const [forms, setForm] = useState(null);
   const [domains, setDomain] = useState('');
@@ -114,10 +116,14 @@ const ListUsers = ({
   };
 
   const handleCancel = () => {
+    forms.resetFields();
+    setMessage({ errCode: -1, message: '' });
+    setInput({});
     setVisible(false);
   };
 
   const handleChange = record => {
+    forms.resetFields();
     setVisible(true);
     setInput({
       address: record.address,
@@ -147,21 +153,27 @@ const ListUsers = ({
           email: user.email,
           stellar_addr: values.stellar_addr,
           memo: values.memo,
+          isLoading: true,
         });
         const res = await updateAddress(
-          user.email,
+          values.address,
           values.stellar_addr,
           values.memo
         );
         if (!!res.errMsg) {
+          setInput({ isLoading: false, mode: 'edit' });
           setMessage({ errCode: 1, message: res.errMsg });
         } else {
+          setInput({ isLoading: false, mode: 'edit' });
+          setMessage({ errCode: -1, message: '' });
+          form.resetFields();
           data.map(MapData, values);
           setData(data);
-          form.resetFields();
+
           setVisible(false);
         }
       } else {
+        setInput({ ...input, isLoading: true });
         const res = await insertAddress(
           user.email,
           domains,
@@ -172,9 +184,12 @@ const ListUsers = ({
 
         if (!!res.errMsg) {
           setMessage({ errCode: 1, message: res.errMsg });
+          setInput({ isLoading: false, mode: 'add' });
         } else {
           form.resetFields();
           setVisible(false);
+          setInput({ isLoading: false, mode: 'add' });
+          setMessage({ errCode: -1, message: '' });
           setData([
             ...data,
             {
@@ -187,12 +202,12 @@ const ListUsers = ({
           ]);
         }
       }
-      console.log('Received values of form: ', values);
     });
   };
 
   const handleSubmit = () => {
-    setInput({ stellar_addr: '', address: '', memo: '' });
+    forms.resetFields();
+    setInput({ mode: 'add' });
     setVisible(true);
   };
 
@@ -247,6 +262,7 @@ const ListUsers = ({
         ref={saveFormRef}
         msg={msg}
         record={input}
+        loading={input.isLoading}
       />
       <Box {...contentWrapper}>
         <Heading content="Your Addresses" {...titleStyle} />
@@ -282,8 +298,13 @@ const ListUsers = ({
           </Box>
         </Box>
 
-        <Table dataSource={data}>
-          <Column title="Federation" dataIndex="address" key="address" />
+        <Table dataSource={data} scroll={{ x: 'max-content' }}>
+          <Column
+            title="Federation"
+            dataIndex="address"
+            key="address"
+            fixed="left"
+          />
           <Column
             title="Stellar Addr"
             dataIndex="stellar_addr"
@@ -294,6 +315,7 @@ const ListUsers = ({
           <Column
             title="Action"
             key="Action"
+            fixed="right"
             render={(text, record) => (
               <span>
                 <a onClick={() => handleChange(record)}>Change</a>
