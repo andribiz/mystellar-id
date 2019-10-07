@@ -16,10 +16,7 @@ import LoginImage from '../../assets/image/background-login.jpg';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
-// import Router from 'next/router';
-// import { useRouter } from 'next/router';
 import Link from 'next/link';
-// import PasswordMask from 'react-password-mask';
 
 const { login, register, insertUser, forgot } = FirebaseHelper;
 
@@ -174,15 +171,6 @@ const Login = ({
                     label="Password"
                   />
                 </div>
-
-                {/*<PasswordMask*/}
-                {/*    id="password"*/}
-                {/*    name="password"*/}
-                {/*    placeholder="Password"*/}
-                {/*    value={state.password}*/}
-                {/*    onChange={value => setState({ ...state, password: value })}*/}
-                {/*    useVendorStyles={false}*/}
-                {/*/>*/}
 
                 <CheckBox
                   id="remember"
