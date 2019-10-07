@@ -8,6 +8,7 @@ import Text from '../../elements/Text';
 import FirebaseHelper from '../../helper/firebase';
 import PropTypes from 'prop-types';
 import { Alert } from 'antd';
+import Link from 'next/link';
 
 const { sendPasswordResetEmail } = FirebaseHelper;
 
@@ -52,7 +53,7 @@ const ForgetPassword = ({
             errCode: 0,
             message: 'Please go to your email to reset your password',
           });
-          hideErrMessage(5000);
+          // hideErrMessage(5000);
         })
         .catch(e => {
           setMessage({
@@ -79,13 +80,17 @@ const ForgetPassword = ({
           {...descriptionStyle}
         />
         <Box>
-          <Input
-            className="inputEmail"
-            size="large"
-            placeholder="Email"
-            value={stateForgot.email}
-            onChange={value => setStateForgot({ ...stateForgot, email: value })}
-          />
+          {msg.errCode !== 0 && (
+            <Input
+              className="inputEmail"
+              size="large"
+              placeholder="Email"
+              value={stateForgot.email}
+              onChange={value =>
+                setStateForgot({ ...stateForgot, email: value })
+              }
+            />
+          )}
         </Box>
         <AlertMessage />
         <Box>
@@ -98,6 +103,11 @@ const ForgetPassword = ({
                 handleForgot(FirebaseHelper.GOOGLE);
               }}
             />
+          )}
+          {msg.errCode === 0 && (
+            <Link href="/login">
+              <Button className="default" title="Login" {...btnStyle} />
+            </Link>
           )}
         </Box>
       </Box>

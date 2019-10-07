@@ -164,6 +164,7 @@ const Login = ({
                   onChange={value => setState({ ...state, email: value })}
                 />
                 <Input
+                  type="password"
                   inputType="password"
                   isMaterial
                   value={state.password}
