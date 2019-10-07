@@ -5,27 +5,39 @@ import Heading from '../../elements/Heading';
 import Button from '../../elements/Button';
 import ListMystellarWrapper from './ListUsersWrapper.style';
 import FirebaseHelper from '../../helper/firebase';
-import { Alert, Divider, Table, Select, Form, Modal } from 'antd';
+import {
+  Alert,
+  Divider,
+  Table,
+  Select,
+  Form,
+  Modal,
+  Popconfirm,
+  notification,
+  Input,
+} from 'antd';
 import 'antd/es/alert/style/css';
 
-import Input from '../../elements/Input';
+import Text from '../../elements/Text';
 
 const { Column } = Table;
 const {
-  onSnapshotFed,
   onSnapshotDomain,
   onSearchDomain,
   insertAddress,
+  deleteFed,
+  updateAddress,
 } = FirebaseHelper;
 const { Option } = Select;
 
-const modalFormAddress = ({ visible, onCancel, onCreate, form, msg }) => {
-  const [input, setInput] = useState({
-    address: '',
-    stellar_addr: '',
-    memo: '',
-  });
-
+const modalFormAddress = ({
+  visible,
+  onCancel,
+  onCreate,
+  form,
+  msg,
+  record,
+}) => {
   const { getFieldDecorator } = form;
 
   const AlertMessage = () => {
@@ -40,29 +52,29 @@ const modalFormAddress = ({ visible, onCancel, onCreate, form, msg }) => {
     <Modal
       visible={visible}
       title="Create a new collection"
-      okText="Create"
+      okText={record.address ? 'Edit' : 'Create'}
       onCancel={onCancel}
       onOk={onCreate}
     >
       <Form layout="vertical">
         <Form.Item label="MyStellar Address">
           {getFieldDecorator('address', {
-            rules: [{ required: true, message: 'Please input' }],
-            initialValue: '',
-          })(<Input />)}
+            rules: [{ disabled: true, message: 'Please input' }],
+            initialValue: record.address,
+          })(<Input disabled={!!record.address ? true : false} />)}
         </Form.Item>
         <Form.Item label="Stellar Address">
           {getFieldDecorator('stellar_addr', {
             rules: [
               { required: true, message: 'Please input Stellar Address' },
             ],
-            initialValue: '',
+            initialValue: record.stellar_addr,
           })(<Input />)}
         </Form.Item>
         <Form.Item label="Memo (Optional)">
           {getFieldDecorator('memo', {
             rules: [{ required: false }],
-            initialValue: '',
+            initialValue: record.memo,
           })(<Input />)}
         </Form.Item>
       </Form>
@@ -79,17 +91,25 @@ const ListUsers = ({
   btnStyle,
   titleStyle,
   contentWrapper,
-  actionWrapper,
-  actionStyle,
-  domainStyle,
+  descriptionStyle,
+  hintTextStyle,
+  googleButtonStyle,
   user,
 }) => {
   const [data, setData] = useState([]);
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
   const [options, setOptions] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [input, setInput] = useState({ isLoading: false, domain: '' });
+  const [input, setInput] = useState({
+    isLoading: false,
+    address: '',
+    stellar_addr: '',
+    memo: '',
+    email: user.email,
+    mode: 'add',
+  });
   const [forms, setForm] = useState(null);
+  const [domains, setDomain] = useState('');
 
   const saveFormRef = formRef => {
     setForm(formRef);
@@ -99,41 +119,84 @@ const ListUsers = ({
     setVisible(false);
   };
 
+  const handleChange = record => {
+    setVisible(true);
+    setInput({
+      address: record.address,
+      stellar_addr: record.stellar_addr,
+      memo: record.memo,
+      domain: domains,
+      mode: 'edit',
+    });
+  };
+
+  const openNotification = (type, message) => {
+    notification[type]({
+      message: message,
+    });
+  };
+
   const handleCreate = () => {
     const form = forms;
+
     form.validateFields(async (err, values) => {
       if (err) {
         return;
       }
-      const res = await insertAddress(
-        user.email,
-        input.domain,
-        values.address,
-        values.stellar_addr,
-        values.memo || null
-      );
-
-      if (!!res.errMsg) {
-        setMessage({ errCode: 1, message: res.errMsg });
+      if (input.mode === 'edit') {
+        setInput({
+          ...input,
+          email: user.email,
+          stellar_addr: values.stellar_addr,
+          memo: values.memo,
+        });
+        const res = await updateAddress({
+          email: user.email,
+          stellar_addr: values.stellar_addr,
+          memo: values.memo,
+          domain: domains,
+          address: input.address,
+        });
+        if (!!res.errMsg) {
+          setMessage({ errCode: 1, message: res.errMsg });
+        } else {
+          data.map(MapData, values);
+          setData(data);
+          form.resetFields();
+          setVisible(false);
+        }
       } else {
-        setVisible(false);
-        setData([
-          ...data,
-          {
-            address: values.address,
-            email: user.email,
-            memo: values.memo,
-            stellar_addr: values.stellar_addr,
-            memo_type: values.memo_type,
-          },
-        ]);
-      }
+        const res = await insertAddress(
+          user.email,
+          domains,
+          values.address,
+          values.stellar_addr,
+          values.memo || null
+        );
 
+        if (!!res.errMsg) {
+          setMessage({ errCode: 1, message: res.errMsg });
+        } else {
+          form.resetFields();
+          setVisible(false);
+          setData([
+            ...data,
+            {
+              address: values.address + '*' + domains,
+              email: user.email,
+              memo: values.memo,
+              stellar_addr: values.stellar_addr,
+              memo_type: values.memo_type,
+            },
+          ]);
+        }
+      }
       console.log('Received values of form: ', values);
     });
   };
 
   const handleSubmit = () => {
+    setInput({ stellar_addr: '', address: '', memo: '' });
     setVisible(true);
   };
 
@@ -148,18 +211,40 @@ const ListUsers = ({
     };
   };
 
-  const onChangeDomain = async domain => {
-    const dt = await onSearchDomain(user, domain);
+  const onChangeDomain = async domainVal => {
+    setDomain(domainVal);
+    console.log(domains);
+    const dt = await onSearchDomain(user, domainVal);
     setData(dt);
-    setInput({ ...input, domain: domain });
   };
+
+  function MapData(item) {
+    console.log(this.address);
+    if (item.address === this.address) {
+      item.stellar_addr = this.stellar_addr;
+      item.memo = this.memo;
+    }
+    return item;
+  }
 
   const onSnapshot = snapshot => {
     snapshot.docChanges().forEach(change => {
       if (change.type === 'added') {
         setData(data => [...data, toJson(change.doc)]);
+      } else if (change.type === 'modified') {
+        setData(data => data.map(MapData, change.doc.data()));
       }
     });
+  };
+
+  const removeFed = async record => {
+    const result = await deleteFed(record);
+    if (result.errMsg === '') {
+      setData(data => data.filter(row => row.address != record));
+      openNotification('success', 'Address has been deleted');
+    } else {
+      openNotification('error', result.errMsg);
+    }
   };
 
   const onSnapshotDom = snapshot => {
@@ -174,10 +259,8 @@ const ListUsers = ({
   };
 
   useEffect(() => {
-    const snap = onSnapshotFed(user, input.domain, onSnapshot);
     const domain = onSnapshotDomain(user, onSnapshotDom);
     return () => {
-      snap();
       domain();
     };
   }, []);
@@ -197,14 +280,6 @@ const ListUsers = ({
 
   return (
     <ListMystellarWrapper>
-      <AddressCreateForm
-        visible={visible}
-        onCancel={handleCancel}
-        onCreate={handleCreate}
-        ref={saveFormRef}
-        msg={msg}
-      />
-
       <Box {...contentWrapper}>
         <Heading content="Your Addresses" {...titleStyle} />
 
@@ -253,9 +328,15 @@ const ListUsers = ({
             key="Action"
             render={(text, record) => (
               <span>
-                <a>Change</a>
+                <a onClick={() => handleChange(record)}>Change</a>
                 <Divider type="vertical" />
-                <a>Delete</a>
+                <Popconfirm
+                  title="Are you sure want to delete this address?"
+                  okText={'Delete'}
+                  onConfirm={() => removeFed(record.address)}
+                >
+                  <a>Delete</a>
+                </Popconfirm>
               </span>
             )}
           />
@@ -308,6 +389,11 @@ ListUsers.defaultProps = {
     minWidth: '156px',
     fontSize: '14px',
     fontWeight: '500',
+  },
+  // Google button style
+  googleButtonStyle: {
+    bg: '#ffffff',
+    color: '#343D48',
   },
 };
 
