@@ -151,6 +151,7 @@ ForgetPassword.defaultProps = {
     minWidth: '156px',
     fontSize: '14px',
     fontWeight: '10',
+    alignSelf: 'center',
   },
 };
 

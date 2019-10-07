@@ -15,7 +15,7 @@
     "@redq/reuse-modal": "^1.1.9",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "latest",
-    "antd": "^4.0.0-alpha.6",
+    "antd": "^3.23.3",
     "cors": "^2.8.5",
     "firebase": "^6.6.1",
     "firebase-admin": "^8.6.0",
@@ -49,7 +49,6 @@
     "styled-components": "^4.3.2",
     "styled-system": "^4.1.0",
     "styled-theme": "^0.3.3",
-    "text-security": "^2.0.0-alpha.2",
     "toml": "^3.0.0"
   },
   "devDependencies": {

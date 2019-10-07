@@ -16,7 +16,10 @@ import LoginImage from '../../assets/image/background-login.jpg';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
+// import Router from 'next/router';
+// import { useRouter } from 'next/router';
 import Link from 'next/link';
+// import PasswordMask from 'react-password-mask';
 
 const { login, register, insertUser, forgot } = FirebaseHelper;
 
@@ -24,7 +27,6 @@ const Login = ({
   row,
   col,
   btnStyle,
-  logoStyle,
   titleStyle,
   contentWrapper,
   outlineBtnStyle,
@@ -246,7 +248,6 @@ const Login = ({
 Login.propTypes = {
   row: PropTypes.object,
   col: PropTypes.object,
-  logoStyle: PropTypes.object,
   titleStyle: PropTypes.object,
   hintTextStyle: PropTypes.object,
   contentWrapper: PropTypes.object,
@@ -264,12 +265,6 @@ Login.defaultProps = {
   // Team member col default style
   col: {
     width: [1, 1 / 2],
-  },
-  // Default logo size
-  logoStyle: {
-    width: '128px',
-    height: 'auto',
-    ml: '15px',
   },
   // Title default style
   titleStyle: {
