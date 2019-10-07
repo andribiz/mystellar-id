@@ -35,7 +35,7 @@ class FirebaseHelper {
     this.isValidDomain = this.isValidDomain.bind(this);
     this.getStorageUrl = this.getStorageUrl.bind(this);
     this.logout = this.logout.bind(this);
-    this.onSearchDomain = this.onSearchDomain.bind(this);
+    this.onSearchAddressDomain = this.onSearchAddressDomain.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
     this.auth = firebase.auth();
@@ -151,35 +151,24 @@ class FirebaseHelper {
     return res;
   }
 
-  async onSearchDomain(user, value) {
-    let dt = [];
+  async onSearchAddressDomain(user, domain, value) {
     const data = await this.database
       .collection('federation')
       .where('email', '==', user.email)
+      .where('domain', '==', domain)
       .get();
 
-    data.forEach(doc => {
-      if (!!value) {
-        if (doc.id.substr(doc.id.indexOf('*') + 1) === value) {
-          dt.push({
-            address: doc.id,
-            email: doc.data().email,
-            memo: doc.data().memo,
-            stellar_addr: doc.data().stellar_addr,
-            memo_type: doc.data().memo_type,
-          });
-        }
-      } else {
-        dt.push({
-          address: doc.id,
-          email: doc.data().email,
-          memo: doc.data().memo,
-          stellar_addr: doc.data().stellar_addr,
-          memo_type: doc.data().memo_type,
-        });
-      }
-    });
+    let dt = [];
 
+    data.forEach(doc => {
+      dt.push({
+        address: doc.id,
+        email: doc.data().email,
+        memo: doc.data().memo,
+        stellar_addr: doc.data().stellar_addr,
+        memo_type: doc.data().memo_type,
+      });
+    });
     return dt;
   }
 

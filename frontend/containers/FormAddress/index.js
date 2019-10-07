@@ -10,7 +10,7 @@ import FormAddressWrapper from './formAddress.style';
 import GoogleLogo from '../../assets/image/google-icon.jpg';
 import FirebaseHelper from '../../helper/firebase';
 import { Alert } from 'antd';
-import 'antd/es/alert/style/css';
+// import 'antd/es/alert/style/css';
 
 const { login, isAuthenticated, insertAddress, updateAddress } = FirebaseHelper;
 

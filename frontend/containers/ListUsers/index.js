@@ -21,7 +21,7 @@ import 'antd/es/alert/style/css';
 const { Column } = Table;
 const {
   onSnapshotDomain,
-  onSearchDomain,
+  onSearchAddressDomain,
   insertAddress,
   deleteFed,
   updateAddress,
@@ -213,7 +213,7 @@ const ListUsers = ({
 
   const onChangeDomain = async domainVal => {
     setDomain(domainVal);
-    const dt = await onSearchDomain(user, domainVal);
+    const dt = await onSearchAddressDomain(user, domainVal);
     setData(dt);
   };
 
@@ -292,7 +292,9 @@ const ListUsers = ({
               }
             >
               {options.map(item => (
-                <Option value={item.label}>{item.label}</Option>
+                <Option key={item.label} value={item.label}>
+                  {item.label}
+                </Option>
               ))}
             </Select>
           </Box>
