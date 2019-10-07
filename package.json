@@ -36,7 +36,7 @@
     "firebase-serve": "cross-env NODE_ENV=production firebase serve",
     "prefirebase-deploy": "yarn run build-public && yarn run build-funcs && yarn workspace frontend-landing run build && yarn run copy-deps",
     "firebase-deploy": "firebase deploy",
-    "build-public": "cpx \"public/*\" \"dist/public\" -C",
+    "build-public": "cpx \"public/**/*\" \"dist/public\" -C && cpx \"frontend/out/**/*\" \"dist/public\" -C && cpx \"public/.well-known/*\" \"dist/public/.well-known\" -C",
     "build-funcs": "babel \"frontend/functions\" --out-dir \"dist/functions\"",
     "copy-deps": "cpx \"frontend/package.json\" \"dist/functions\" -C",
     "install-deps": "cd \"dist/functions\" && yarn"
