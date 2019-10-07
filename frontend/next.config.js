@@ -13,8 +13,10 @@ const nextConfig = {
     if (isServer) {
       const antStyles = /antd\/.*?\/style\/css.*?/;
       const origExternals = [...config.externals];
-      config.externals = [ // eslint-disable-line
-        (context, request, callback) => { // eslint-disable-line
+      config.externals = [
+        // eslint-disable-line
+        (context, request, callback) => {
+          // eslint-disable-line
           if (request.match(antStyles)) return callback();
           if (typeof origExternals[0] === 'function') {
             origExternals[0](context, request, callback);
@@ -32,7 +34,18 @@ const nextConfig = {
     }
     return config;
   },
-  distDir: '../dist/functions/next'
+  distDir: '../dist/functions/next',
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' },
+      '/login': { page: '/login' },
+      '/console': { page: '/console' },
+      '/console/': { page: '/console' },
+      '/console/federation': { page: '/console/federation' },
+      '/console/federation-user': { page: '/console/federation-user' },
+      '/console/not-yet': { page: '/console/not-yet' },
+    };
+  },
 };
 
 module.exports = withPlugins(
@@ -59,5 +72,5 @@ module.exports = withPlugins(
       },
     },
   ],
-    nextConfig,
+  nextConfig
 );
