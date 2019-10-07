@@ -2,8 +2,10 @@ import https from 'https';
 import toml from 'toml';
 
 const isVerifiedDomain = (domain, callbackRes) => {
-  const FEDERATION_SERVER =
-    'https://us-central1-mystellar-id.cloudfunctions.net/federation';
+  const FEDERATION_SERVER = [
+    'https://us-central1-mystellar-id.cloudfunctions.net/backend-federation',
+    'https://mystellar.id/api/federation',
+  ];
   const options = {
     hostname: domain,
     port: 443,
@@ -16,7 +18,7 @@ const isVerifiedDomain = (domain, callbackRes) => {
       res.on('data', data => {
         try {
           const serverConfig = toml.parse(data);
-          if (serverConfig.FEDERATION_SERVER === FEDERATION_SERVER) {
+          if (FEDERATION_SERVER.includes(serverConfig.FEDERATION_SERVER)) {
             callbackRes({ errCode: 0, message: 'Domain verified' });
           } else {
             callbackRes({ errCode: 1, message: 'Config file is not valid' });
