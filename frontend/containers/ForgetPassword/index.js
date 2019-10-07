@@ -28,6 +28,15 @@ const ForgetPassword = ({
     return null;
   };
 
+  const hideErrMessage = seconds => {
+    setTimeout(() => {
+      setMessage({
+        errCode: -1,
+        message: '',
+      });
+    }, seconds);
+  };
+
   const handleForgot = method => {
     if (!validEmailRegex.test(stateForgot.email)) {
       setMessage({
@@ -35,12 +44,7 @@ const ForgetPassword = ({
         message: 'Please enter your valid email',
       });
 
-      setTimeout(() => {
-        setMessage({
-          errCode: -1,
-          message: '',
-        });
-      }, 5000);
+      hideErrMessage(5000);
     } else {
       sendPasswordResetEmail(stateForgot.email)
         .then(() => {
@@ -48,27 +52,14 @@ const ForgetPassword = ({
             errCode: 0,
             message: 'Please go to your email to reset your password',
           });
-
-          setTimeout(() => {
-            setMessage({
-              errCode: -1,
-              message: '',
-            });
-          }, 5000);
+          hideErrMessage(5000);
         })
         .catch(e => {
           setMessage({
             errCode: 1,
-            message:
-              'Too Many Request. We have blocked all requests from this device due to unusual activity.Try again later',
+            message: e.message,
           });
-
-          setTimeout(() => {
-            setMessage({
-              errCode: -1,
-              message: '',
-            });
-          }, 10000);
+          hideErrMessage(10000);
         });
 
       setStateForgot({ email: '' });
