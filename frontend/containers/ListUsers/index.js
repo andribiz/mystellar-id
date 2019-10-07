@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
@@ -17,8 +17,6 @@ import {
   Input,
 } from 'antd';
 import 'antd/es/alert/style/css';
-
-import Text from '../../elements/Text';
 
 const { Column } = Table;
 const {
@@ -91,9 +89,9 @@ const ListUsers = ({
   btnStyle,
   titleStyle,
   contentWrapper,
-  descriptionStyle,
-  hintTextStyle,
-  googleButtonStyle,
+  actionWrapper,
+  actionStyle,
+  domainStyle,
   user,
 }) => {
   const [data, setData] = useState([]);
@@ -200,17 +198,6 @@ const ListUsers = ({
     setVisible(true);
   };
 
-  const toJson = doc => {
-    const dt = doc.data();
-    return {
-      address: doc.id,
-      email: dt.email,
-      memo: dt.memo,
-      stellar_addr: dt.stellar_addr,
-      memo_type: dt.memo_type,
-    };
-  };
-
   const onChangeDomain = async domainVal => {
     setDomain(domainVal);
     console.log(domains);
@@ -226,16 +213,6 @@ const ListUsers = ({
     }
     return item;
   }
-
-  const onSnapshot = snapshot => {
-    snapshot.docChanges().forEach(change => {
-      if (change.type === 'added') {
-        setData(data => [...data, toJson(change.doc)]);
-      } else if (change.type === 'modified') {
-        setData(data => data.map(MapData, change.doc.data()));
-      }
-    });
-  };
 
   const removeFed = async record => {
     const result = await deleteFed(record);
@@ -265,21 +242,16 @@ const ListUsers = ({
     };
   }, []);
 
-  const LoginButtonGroup = ({ isLoggedIn }) => (
-    <Fragment>
-      <Button
-        className="default"
-        title="I'm Ready"
-        onClick={handSubmit}
-        isLoading={input.isLoading}
-        disabled={input.isLoading}
-        {...btnStyle}
-      />
-    </Fragment>
-  );
-
   return (
     <ListMystellarWrapper>
+      <AddressCreateForm
+        visible={visible}
+        onCancel={handleCancel}
+        onCreate={handleCreate}
+        ref={saveFormRef}
+        msg={msg}
+        record={input}
+      />
       <Box {...contentWrapper}>
         <Heading content="Your Addresses" {...titleStyle} />
 
