@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { Popover } from 'antd';
 import TopbarDropdownWrapper from './topbarDropdown.style';
-import userpic from '../../assets/image/user.png';
+import userpic from '../../assets/image/avatar.png';
 import FirebaseHelper from '../../helper/firebase';
 import { useRouter } from 'next/router';
 import Image from '../../elements/Image';

@@ -23,6 +23,10 @@ const LoginWrapper = styled.div`
     }
   }
 
+  input {
+    -webkit-text-security: disc;
+  }
+
   .rc-tabs {
     border: 0;
     max-width: 360px;
