@@ -23,8 +23,10 @@ const LoginWrapper = styled.div`
     }
   }
 
-  input {
-    -webkit-text-security: disc;
+  .password {
+    input {
+      -webkit-text-security: disc;
+    }
   }
 
   .rc-tabs {

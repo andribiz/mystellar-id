@@ -164,14 +164,16 @@ const Login = ({
                   value={state.email}
                   onChange={value => setState({ ...state, email: value })}
                 />
-                <Input
-                  type="password"
-                  inputType="password"
-                  isMaterial
-                  value={state.password}
-                  onChange={value => setState({ ...state, password: value })}
-                  label="Password"
-                />
+                <div className="password">
+                  <Input
+                    type="password"
+                    inputType="password"
+                    isMaterial
+                    value={state.password}
+                    onChange={value => setState({ ...state, password: value })}
+                    label="Password"
+                  />
+                </div>
 
                 {/*<PasswordMask*/}
                 {/*    id="password"*/}
@@ -221,15 +223,18 @@ const Login = ({
                   onChange={value => setStateReg({ ...stateReg, email: value })}
                   label="Email Address"
                 />
-                <Input
-                  inputType="password"
-                  isMaterial
-                  value={stateReg.password}
-                  onChange={value =>
-                    setStateReg({ ...stateReg, password: value })
-                  }
-                  label="Password"
-                />
+                <div className="password">
+                  <Input
+                    inputType="password"
+                    isMaterial
+                    value={stateReg.password}
+                    onChange={value =>
+                      setStateReg({ ...stateReg, password: value })
+                    }
+                    label="Password"
+                  />
+                </div>
+
                 {stateNotify.errMessage && (
                   <Alert
                     message={stateNotify.errMessage}
