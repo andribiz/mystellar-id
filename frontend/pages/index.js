@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import { ThemeProvider } from 'styled-components';
 import Sticky from 'react-stickynode';
@@ -6,14 +6,13 @@ import { appTheme } from '../theme';
 import { AppWrapper, GlobalStyle } from '../containers/app.style';
 import { ResetCSS } from '../assets/css/style';
 import Navbar from '../containers/Navbar';
-// import NavbarOld from '../containers/NavbarOld';
 import DomainSection from '../containers/Banner';
 import APISection from '../containers/APISection';
 import InfoSection from '../containers/InfoSection';
 import Footer from '../containers/Footer';
 import { DrawerProvider } from '../contexts/DrawerContext';
 import Faq from '../containers/Faq';
-import useWindowSize from '../helper/useWindowSize';
+import CustomAddress from '../containers/CustomAddress';
 
 export default function Index() {
   return (
@@ -44,6 +43,7 @@ export default function Index() {
           <DomainSection />
           <InfoSection />
           <APISection />
+          <CustomAddress />
           <Faq />
           <Footer />
         </AppWrapper>
