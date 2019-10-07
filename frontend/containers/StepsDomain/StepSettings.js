@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '../../elements/Box';
 import Heading from '../../elements/Heading';
 import StepSettingsWrapper from './StepSettings.style';
@@ -9,7 +9,7 @@ import { Alert } from 'antd';
 import { isVerifiedDomain } from '../../helper/DomainUtils';
 import FirebaseHelper from '../../helper/firebase';
 
-const { insertDomain } = FirebaseHelper;
+const { insertDomain, getStorageUrl } = FirebaseHelper;
 
 const StepSetting = ({
   titleStyle,
@@ -25,7 +25,14 @@ const StepSetting = ({
     isLoading: false,
     step: 0,
     verified: false,
+    url: '',
   });
+
+  useEffect(() => {
+    getStorageUrl('stellar.toml').then(url => {
+      setState({ ...state, url: url });
+    });
+  }, []);
 
   const AlertMessage = () => {
     if (msg.errCode === 0)
@@ -73,7 +80,9 @@ const StepSetting = ({
           className="text"
           dangerouslySetInnerHTML={{
             __html:
-              '1. Upload config file <a href="https://firebasestorage.googleapis.com/v0/b/mystellar-id.appspot.com/o/stellar.toml?alt=media&token=2ddd6d5f-a933-47be-814f-4c2882e1fc03">(stellar.toml)</a>' +
+              '1. Upload config file <a href=' +
+              state.url +
+              '>(stellar.toml)</a>' +
               ' to your server with directory root/.well-known/stellar.toml.',
           }}
           {...descriptionStyle}

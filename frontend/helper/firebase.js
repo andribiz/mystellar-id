@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import 'firebase/storage';
 import { firebaseConfig } from './firebase.config';
 import isValidDomain from 'is-valid-domain';
 import { func } from 'prop-types';
@@ -32,11 +33,13 @@ class FirebaseHelper {
     this.onSnapshotFed = this.onSnapshotFed.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.isValidDomain = this.isValidDomain.bind(this);
+    this.getStorageUrl = this.getStorageUrl.bind(this);
     this.logout = this.logout.bind(this);
     this.onSearchDomain = this.onSearchDomain.bind(this);
     this.deleteFed = this.deleteFed.bind(this);
     this.database = firebase.firestore();
     this.auth = firebase.auth();
+    this.storage = firebase.storage();
 
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
@@ -47,10 +50,12 @@ class FirebaseHelper {
     });
   }
 
+  async getStorageUrl(path) {
+    return await this.storage.ref(path).getDownloadURL();
+  }
+
   async sendPasswordResetEmail(email) {
-    return await this.auth.sendPasswordResetEmail(email).then(() => {
-      return true;
-    });
+    return await this.auth.sendPasswordResetEmail(email);
   }
 
   async login(provider, email, password) {
