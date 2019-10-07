@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Input from '../../elements/Input';
 import Button from '../../elements/Button';
 import ForgotPasswordStyleWrapper from '../../containers/ForgetPassword/fogetPassword.style';
@@ -8,8 +8,6 @@ import Text from '../../elements/Text';
 import FirebaseHelper from '../../helper/firebase';
 import PropTypes from 'prop-types';
 import { Alert } from 'antd';
-import { Icon } from 'react-icons-kit';
-import Fade from 'react-reveal/Fade';
 
 const { sendPasswordResetEmail } = FirebaseHelper;
 
@@ -20,9 +18,7 @@ const ForgetPassword = ({
   btnStyle,
 }) => {
   const [msg, setMessage] = useState({ errCode: -1, message: '' });
-  const [stateForgot, setStateForgot] = useState({
-    email: '',
-  });
+  const [stateForgot, setStateForgot] = useState({ email: '' });
 
   const AlertMessage = () => {
     if (msg.errCode === 0)
@@ -33,15 +29,55 @@ const ForgetPassword = ({
   };
 
   const handleForgot = method => {
-    sendPasswordResetEmail(stateForgot.email).then(() => {
+    if (!validEmailRegex.test(stateForgot.email)) {
       setMessage({
-        errCode: 0,
-        message: 'Please go to your email to reset your password',
+        errCode: 1,
+        message: 'Please enter your valid email',
       });
-    });
 
-    setStateForgot({ email: '' });
+      setTimeout(() => {
+        setMessage({
+          errCode: -1,
+          message: '',
+        });
+      }, 5000);
+    } else {
+      sendPasswordResetEmail(stateForgot.email)
+        .then(() => {
+          setMessage({
+            errCode: 0,
+            message: 'Please go to your email to reset your password',
+          });
+
+          setTimeout(() => {
+            setMessage({
+              errCode: -1,
+              message: '',
+            });
+          }, 5000);
+        })
+        .catch(e => {
+          setMessage({
+            errCode: 1,
+            message:
+              'Too Many Request. We have blocked all requests from this device due to unusual activity.Try again later',
+          });
+
+          setTimeout(() => {
+            setMessage({
+              errCode: -1,
+              message: '',
+            });
+          }, 10000);
+        });
+
+      setStateForgot({ email: '' });
+    }
   };
+
+  const validEmailRegex = RegExp(
+    /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+  );
 
   return (
     <ForgotPasswordStyleWrapper>
@@ -61,7 +97,6 @@ const ForgetPassword = ({
           />
         </Box>
         <AlertMessage />
-
         <Box>
           {stateForgot.email !== '' && (
             <Button
