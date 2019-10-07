@@ -14,19 +14,19 @@ import {
   Modal,
   Popconfirm,
   notification,
+  Input,
 } from 'antd';
 import 'antd/es/alert/style/css';
 
-import Input from '../../elements/Input';
 import Text from '../../elements/Text';
 
 const { Column } = Table;
 const {
-  onSnapshotFed,
   onSnapshotDomain,
   onSearchDomain,
   insertAddress,
   deleteFed,
+  updateAddress,
 } = FirebaseHelper;
 const { Option } = Select;
 
@@ -38,12 +38,6 @@ const modalFormAddress = ({
   msg,
   record,
 }) => {
-  const [input, setInput] = useState({
-    address: '',
-    stellar_addr: '',
-    memo: '',
-  });
-
   const { getFieldDecorator } = form;
 
   const AlertMessage = () => {
@@ -58,22 +52,16 @@ const modalFormAddress = ({
     <Modal
       visible={visible}
       title="Create a new collection"
-      okText="Create"
+      okText={record.address ? 'Edit' : 'Create'}
       onCancel={onCancel}
       onOk={onCreate}
     >
       <Form layout="vertical">
         <Form.Item label="MyStellar Address">
-          {!!record.address ? (
-            <Text content={record.address} />
-          ) : (
-            getFieldDecorator('address', {
-              rules: [
-                { required: true, message: 'Please input', disable: true },
-              ],
-              initialValue: record.address.substr(record.address.indexOf('*')),
-            })(<Input />)
-          )}
+          {getFieldDecorator('address', {
+            rules: [{ disabled: true, message: 'Please input' }],
+            initialValue: record.address,
+          })(<Input disabled={!!record.address ? true : false} />)}
         </Form.Item>
         <Form.Item label="Stellar Address">
           {getFieldDecorator('stellar_addr', {
@@ -114,12 +102,14 @@ const ListUsers = ({
   const [visible, setVisible] = useState(false);
   const [input, setInput] = useState({
     isLoading: false,
-    domain: '',
     address: '',
     stellar_addr: '',
     memo: '',
+    email: user.email,
+    mode: 'add',
   });
   const [forms, setForm] = useState(null);
+  const [domains, setDomain] = useState('');
 
   const saveFormRef = formRef => {
     setForm(formRef);
@@ -135,7 +125,8 @@ const ListUsers = ({
       address: record.address,
       stellar_addr: record.stellar_addr,
       memo: record.memo,
-      domain: input.domain,
+      domain: domains,
+      mode: 'edit',
     });
   };
 
@@ -147,40 +138,65 @@ const ListUsers = ({
 
   const handleCreate = () => {
     const form = forms;
+
     form.validateFields(async (err, values) => {
       if (err) {
         return;
       }
-      const res = await insertAddress(
-        user.email,
-        input.domain,
-        values.address,
-        values.stellar_addr,
-        values.memo || null
-      );
-
-      if (!!res.errMsg) {
-        setMessage({ errCode: 1, message: res.errMsg });
+      if (input.mode === 'edit') {
+        setInput({
+          ...input,
+          email: user.email,
+          stellar_addr: values.stellar_addr,
+          memo: values.memo,
+        });
+        const res = await updateAddress({
+          email: user.email,
+          stellar_addr: values.stellar_addr,
+          memo: values.memo,
+          domain: domains,
+          address: input.address,
+        });
+        if (!!res.errMsg) {
+          setMessage({ errCode: 1, message: res.errMsg });
+        } else {
+          data.map(MapData, values);
+          setData(data);
+          form.resetFields();
+          setVisible(false);
+        }
       } else {
-        form.resetFields();
-        setVisible(false);
-        setData([
-          ...data,
-          {
-            address: values.address + '*' + input.domain,
-            email: user.email,
-            memo: values.memo,
-            stellar_addr: values.stellar_addr,
-            memo_type: values.memo_type,
-          },
-        ]);
-      }
+        const res = await insertAddress(
+          user.email,
+          domains,
+          values.address,
+          values.stellar_addr,
+          values.memo || null
+        );
 
+        if (!!res.errMsg) {
+          setMessage({ errCode: 1, message: res.errMsg });
+        } else {
+          form.resetFields();
+          setVisible(false);
+          setData([
+            ...data,
+            {
+              address: values.address + '*' + domains,
+              email: user.email,
+              memo: values.memo,
+              stellar_addr: values.stellar_addr,
+              memo_type: values.memo_type,
+            },
+          ]);
+        }
+      }
       console.log('Received values of form: ', values);
     });
   };
 
   const handleSubmit = () => {
+    setInput({ stellar_addr: '', address: '', memo: '' });
     setVisible(true);
   };
 
@@ -195,16 +211,28 @@ const ListUsers = ({
     };
   };
 
-  const onChangeDomain = async domain => {
-    setInput({ ...input, domain: domain });
-    const dt = await onSearchDomain(user, domain);
+  const onChangeDomain = async domainVal => {
+    setDomain(domainVal);
+    console.log(domains);
+    const dt = await onSearchDomain(user, domainVal);
     setData(dt);
   };
+
+  function MapData(item) {
+    console.log(this.address);
+    if (item.address === this.address) {
+      item.stellar_addr = this.stellar_addr;
+      item.memo = this.memo;
+    }
+    return item;
+  }
 
   const onSnapshot = snapshot => {
     snapshot.docChanges().forEach(change => {
       if (change.type === 'added') {
         setData(data => [...data, toJson(change.doc)]);
+      } else if (change.type === 'modified') {
+        setData(data => data.map(MapData, change.doc.data()));
       }
     });
   };
@@ -231,10 +259,8 @@ const ListUsers = ({
   };
 
   useEffect(() => {
-    const snap = onSnapshotFed(user, input.domain, onSnapshot);
     const domain = onSnapshotDomain(user, onSnapshotDom);
     return () => {
-      snap();
       domain();
     };
   }, []);

@@ -85,11 +85,10 @@ class FirebaseHelper {
   }
 
   async updateAddress(input) {
-    const domain = '*mystellar.id';
     try {
       let docs = await this.database
         .collection('federation')
-        .doc(input.address + domain)
+        .doc(input.address)
         .set({ ...input, stellar_addr: input.stellar_addr, memo: input.memo });
       return { errMsg: '' };
     } catch (err) {
