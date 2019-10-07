@@ -51,7 +51,7 @@ const StepRegister = ({
 
   return (
     <StepRegisterWrapper>
-      <Box className="card">
+      <Box>
         <Heading content={'Register your Domain'} {...titleStyle} />
         <Text
           content={
