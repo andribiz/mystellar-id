@@ -158,7 +158,7 @@ const ListUsers = ({
         const res = await updateAddress(
           values.address,
           values.stellar_addr,
-          values.memo
+          values.memo || ''
         );
         if (!!res.errMsg) {
           setInput({ isLoading: false, mode: 'edit' });
@@ -179,7 +179,7 @@ const ListUsers = ({
           domains,
           values.address,
           values.stellar_addr,
-          values.memo || null
+          values.memo || ''
         );
 
         if (!!res.errMsg) {
